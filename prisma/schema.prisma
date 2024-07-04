@@ -19,3 +19,32 @@ model Post {
 
     @@index([name])
 }
+
+model User {
+    id       String   @id @unique
+    userName String   @unique
+    streak   Streak[]
+
+    @@index([id])
+    @@index([userName])
+}
+
+model Streak {
+    id    Int    @id @default(autoincrement())
+    name  String
+    url   String
+    emoji String
+
+    User          User?         @relation(fields: [userId], references: [id])
+    userId        String?
+    StreakEntries StreakEntry[]
+}
+
+model StreakEntry {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    StreakId  Streak @relation(fields: [streaksId], references: [id])
+    streaksId Int
+}
