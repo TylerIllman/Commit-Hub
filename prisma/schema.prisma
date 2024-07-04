@@ -53,4 +53,6 @@ model StreakCompletion {
 
     streak   Streak @relation(fields: [streakId], references: [id])
     streakId Int
+
+    @@index([streakId])
 }
