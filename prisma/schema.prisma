@@ -21,7 +21,7 @@ model Post {
 }
 
 model User {
-    id       String   @id @unique
+    id       Int      @id @unique
     userName String   @unique
     streak   Streak[]
 
@@ -35,16 +35,22 @@ model Streak {
     url   String
     emoji String
 
-    User          User?         @relation(fields: [userId], references: [id])
-    userId        String?
-    StreakEntries StreakEntry[]
+    description String?
+    startDate   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    user          User               @relation(fields: [userId], references: [id])
+    userId        Int
+    streakEntries StreakCompletion[]
+
+    @@index([userId])
 }
 
-model StreakEntry {
+model StreakCompletion {
     id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    StreakId  Streak @relation(fields: [streaksId], references: [id])
-    streaksId Int
+    streak   Streak @relation(fields: [streakId], references: [id])
+    streakId Int
 }
