@@ -32,6 +32,13 @@ Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/ver
 
 # Migrate DB
 
-```bash
 https://www.prisma.io/docs/orm/overview/databases/turso
+
+```bash
+npx prisma generate
+
+// This has to be run against an existing sql lite db .: have to switch the url in the db obj in side schema file to one that starts with 'file:'
+npx prisma migrate dev --name init
+
+turso db shell turso-prisma-db < ./prisma/migrations/20230922132717_init/migration.sql
 ```

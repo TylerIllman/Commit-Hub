@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+// import { z } from "zod";
+import { db } from "~/server/db";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -9,7 +10,7 @@ export const authRouter = createTRPCRouter({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    const dbUser = await ctx.db.({
+    const dbUser = await ctx.db.user.findFirst({
       where: {
         id: ctx.user.id,
       },

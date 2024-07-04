@@ -2,7 +2,6 @@
 
 import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { NextResponse } from "next/server";
 import { api } from "~/trpc/react";
 
 const Page = () => {

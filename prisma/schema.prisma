@@ -8,8 +8,8 @@ generator client {
 
 datasource db {
     provider = "sqlite"
-    // url      = env("TURSO_DATABASE_URL")
-    url      = env("DATABASE_URL") // Used for dummy migrations to Turso
+    url      = env("TURSO_DATABASE_URL")
+    // url      = env("DATABASE_URL") // Used for dummy migrations to Turso
 }
 
 model Post {
