@@ -40,5 +40,5 @@ npx prisma generate
 // This has to be run against an existing sql lite db .: have to switch the url in the db obj in side schema file to one that starts with 'file:'
 npx prisma migrate dev --name init
 
-turso db shell turso-prisma-db < ./prisma/migrations/20230922132717_init/migration.sql
+turso db shell turso-prisma-db < ./prisma/migrations//migration.sql
 ```
