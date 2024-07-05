@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 
 const Page = () => {
+  console.log("on auth callback page");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -13,7 +14,7 @@ const Page = () => {
   const resp = api.auth.authCallback.useQuery();
 
   if (resp.data?.success) {
-    router.push(origin ?? "/dashboard");
+    router.push(origin ?? "/");
   }
 
   if (resp.data && !resp.data.success) {

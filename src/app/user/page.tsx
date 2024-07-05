@@ -14,7 +14,7 @@ const Page = async ({ params }: FileChatPageProps) => {
 
   if (!user?.id) redirect(`/auth-callback?origin=dashboard/${fileid}`);
 
-  return <div>home</div>;
+  return <div>{user.fullName}</div>;
 };
 
 export default Page;
