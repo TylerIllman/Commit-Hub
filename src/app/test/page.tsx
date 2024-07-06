@@ -41,12 +41,12 @@ const App: React.FC = () => {
             return {};
           }
           return {
-            "data-tooltip-id": "my-tooltip",
+            "data-tooltip-id": "daily-tooltip",
             "data-tooltip-content": `${value.count} submissions on ${value.date.toISOString().slice(0, 10)}`,
           };
         }}
       />
-      <Tooltip id="my-tooltip" />
+      <Tooltip id="daily-tooltip" />
     </div>
   );
 };
