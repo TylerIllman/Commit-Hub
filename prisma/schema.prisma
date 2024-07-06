@@ -22,9 +22,12 @@ model Post {
 }
 
 model User {
-    id       String   @id @unique
-    userName String   @unique
-    streak   Streak[]
+    id       String @id @unique
+    userName String @unique
+
+    // fullName String
+
+    streak Streak[]
 
     @@index([id])
     @@index([userName])

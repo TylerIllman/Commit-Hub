@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 // import ReactTooltip from "react-tooltip";
