@@ -36,22 +36,106 @@ const Page = async ({ params }: UserPageProps) => {
   // }
 
   return (
-    <div className="flex w-full max-w-[1600px] flex-col gap-4">
+    <div className="flex w-full max-w-[1600px] flex-col">
       <div className="flex w-full justify-start gap-2">
         {/* TODO: replace smile with the user's emoji */}
-        <div className="flex items-center justify-center rounded-full bg-background-800 p-4">
-          <span className="text-6xl">😊</span>
-        </div>
-        <div />
-        <div className="gap-4">
+
+        <div className="flex flex-col">
           {/* TODO: add full name to local db */}
-          <h1 className="text-8xl font-bold">{user.userName}</h1>
-          <p className="text-2xl text-primary-500">@{user.userName}</p>
-          {/* this is my page {user.fullName} */}
+          <div className="flex flex-row items-center gap-4">
+            {/* TODO: figure out how to give width preference to this di */}
+            <h1 className="whitespace-nowrap text-8xl font-bold">
+              Tyler Illman
+            </h1>
+          </div>
+
+          <div className="p-1"></div>
+
+          <div className="flex flex-row items-end gap-4">
+            <span className="text-l flex-nowrap whitespace-nowrap text-primary-500">
+              @{user.userName}
+            </span>
+            <span className="text-l flex whitespace-nowrap text-text-400">
+              Joined: 05 March 2024
+            </span>
+            <span className="text-l whitespace-nowrap text-text-400">
+              Longest Streak: 42
+            </span>
+            {/* this is my page {user.fullName} */}
+          </div>
+
+          <div className="p-2"></div>
+        </div>
+
+        <div className="flex w-full justify-end">
+          <div className="flex flex-col items-center justify-center gap-2 rounded-lg p-6 text-center">
+            <span className="text-xl text-text-400">Current Streak</span>
+            <span className="flex text-6xl font-bold">🔥42</span>
+          </div>
+        </div>
+        <div className=" flex w-full justify-center">
+          <div className="flex flex-col items-center justify-center gap-2 rounded-lg  p-6 text-center">
+            <span className="text-xl text-text-400">Completed Today</span>
+
+            <span className="flex text-6xl font-bold">✅ 4</span>
+          </div>
         </div>
       </div>
-      <div className="w-full rounded-lg bg-background-800 p-6">
+
+      <div className="p-2"></div>
+
+      <div className="flex flex-row gap-4">
+        <div className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl">
+          🐻
+        </div>
+        <div className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl">
+          🤬
+        </div>
+        <div className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl">
+          🎲
+        </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+          🦓
+        </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+          🐯
+        </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+          🍖
+        </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+          🥓
+        </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+          🐽
+        </div>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full text-6xl">
+          ➕
+        </div>
+      </div>
+
+      <div className="p-4"></div>
+
+      <div className="w-full rounded-lg bg-background-800 px-6 py-5">
         <CommitCalendar />
+      </div>
+
+      <h2 className="pb-4 pt-10 text-5xl font-bold">🐻 LeetCode</h2>
+      <div className="w-full rounded-lg bg-background-800 px-6 py-5">
+        <CommitCalendar />
+      </div>
+
+      <h2 className="pb-4 pt-10 text-5xl font-bold">🤬 Github Commits</h2>
+      <div className="w-full rounded-lg bg-background-800 px-6 py-5">
+        <CommitCalendar />
+      </div>
+
+      <div className="p-6"></div>
+
+      <div className="flex w-full items-center justify-center">
+        <button className="max-w-[400px] rounded-lg bg-primary-400 px-4 py-3 text-center">
+          Add New Streak
+        </button>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ type CalendarValue = {
 const today: Date = new Date();
 
 const CommitCalendar: React.FC = () => {
-  const randomValues: CalendarValue[] = getRange(200).map((index) => {
+  const randomValues: CalendarValue[] = getRange(365).map((index) => {
     return {
       date: shiftDate(today, -index),
       count: getRandomInt(1, 3),
