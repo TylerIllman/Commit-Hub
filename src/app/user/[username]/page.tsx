@@ -1,4 +1,7 @@
-import { currentUser } from "@clerk/nextjs/server";
+"use client";
+
+import { useUser } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
 
 import CommitCalendar from "~/app/_components/CommitCalendar";
 // import "react-calendar-heatmap/dist/styles.css";
@@ -11,18 +14,36 @@ interface UserPageProps {
   };
 }
 
-const Page = async ({ params }: UserPageProps) => {
+interface UserType {
+  userName: string;
+  id: string;
+}
+
+const Page = ({ params }: UserPageProps) => {
   const { username } = params;
-  const activeUser = await currentUser();
-  const user = await db.user.findFirst({
-    where: {
-      userName: username,
-    },
+  const { isSignedIn, activeUser, isLoaded } = useUser();
+  const [user, setUser] = useState<null | UserType>(null);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      // try {
+      const res = await db.user.findFirst({
+        where: {
+          userName: username,
+        },
+      });
+      setUser(res);
+      // } catch (error) {
+      //   console.log(error);
+      // }
+    }
+
+    fetchUserData().catch(console.error);
   });
 
-  if (!user) {
-    return <div>No user</div>;
-  }
+  // if (!user) {
+  //   return <div>No user</div>;
+  // }
   // may need to change this auth callback
   // if (!user?.id) redirect(`/auth-callback?origin=/${username}`);
   // if (!user) {
@@ -52,13 +73,14 @@ const Page = async ({ params }: UserPageProps) => {
           <div className="p-1"></div>
 
           <div className="flex flex-row items-end gap-4">
-            <span className="text-l flex-nowrap whitespace-nowrap text-primary-500">
-              @{user.userName}
+            <span className="flex-nowrap whitespace-nowrap text-xl text-primary-500">
+              {/* @{user.userName} */}
+              @tylerillman
             </span>
-            <span className="text-l flex whitespace-nowrap text-text-400">
+            <span className="flex whitespace-nowrap text-xl text-text-400">
               Joined: 05 March 2024
             </span>
-            <span className="text-l whitespace-nowrap text-text-400">
+            <span className="whitespace-nowrap text-xl text-text-400">
               Longest Streak: 42
             </span>
             {/* this is my page {user.fullName} */}
@@ -68,7 +90,7 @@ const Page = async ({ params }: UserPageProps) => {
         </div>
 
         <div className="flex w-full justify-end">
-          <div className="flex flex-col items-center justify-center gap-2 rounded-lg p-6 text-center">
+          <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center">
             <span className="text-xl text-text-400">Current Streak</span>
             <span className="flex text-6xl font-bold">🔥42</span>
           </div>
@@ -85,7 +107,12 @@ const Page = async ({ params }: UserPageProps) => {
       <div className="p-2"></div>
 
       <div className="flex flex-row gap-4">
-        <div className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl">
+        <div
+          className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl"
+          onClick={() => {
+            console.log("clicked");
+          }}
+        >
           🐻
         </div>
         <div className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl">

@@ -10,7 +10,7 @@ dotenv.config();
 
 // TODO: Convert this to use the env.js file so it is dynamic (and not the 'dotenv')
 const libsql = createClient({
-  url: `${process.env.TURSO_DATABASE_URL}`,
+  url: `${process.env.DATABASE_URL}`,
   authToken: `${process.env.TURSO_AUTH_TOKEN}`,
 });
 
