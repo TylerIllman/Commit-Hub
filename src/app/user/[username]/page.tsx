@@ -25,8 +25,10 @@ const Page = ({ params }: UserPageProps) => {
   const { isSignedIn, activeUser, isLoaded } = useUser();
   const [user, setUser] = useState<null | UserType>(null);
 
-  const res = api.user.getUser.useQuery({ userName: "ty" });
+  const res = api.user.getUser.useQuery({ userName: username });
   console.log(res.data);
+
+  if (!res.isFetched) return <div>fetching</div>;
   // useEffect(() => {
   //   async function fetchUserData() {
   //     // try {
