@@ -7,6 +7,7 @@ import CommitCalendar from "~/app/_components/CommitCalendar";
 // import "react-calendar-heatmap/dist/styles.css";
 // import "~/styles/calStyles.css";
 import { db } from "~/server/db";
+import { api } from "~/trpc/react";
 
 interface UserPageProps {
   params: {
@@ -24,22 +25,26 @@ const Page = ({ params }: UserPageProps) => {
   const { isSignedIn, activeUser, isLoaded } = useUser();
   const [user, setUser] = useState<null | UserType>(null);
 
-  useEffect(() => {
-    async function fetchUserData() {
-      // try {
-      const res = await db.user.findFirst({
-        where: {
-          userName: username,
-        },
-      });
-      setUser(res);
-      // } catch (error) {
-      //   console.log(error);
-      // }
-    }
-
-    fetchUserData().catch(console.error);
-  });
+  const res = api.user.getUser.useQuery({ userName: "ty" });
+  console.log(res.data);
+  // useEffect(() => {
+  //   async function fetchUserData() {
+  //     // try {
+  //     // const res = await db.user.findFirst({
+  //     //   where: {
+  //     //     userName: username,
+  //     //   },
+  //     // });
+  //     // setUser(res);
+  //     // } catch (error) {
+  //     //   console.log(error);
+  //     // }
+  //     const res = api.user.getUser.useQuery({ userName: "ty" });
+  //     console.log(res);
+  //   }
+  //
+  //   fetchUserData().catch(console.error);
+  // });
 
   // if (!user) {
   //   return <div>No user</div>;
