@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import { ClerkProvider } from "@clerk/nextjs";
+import { ModalProvider } from "~/components/providers/modal-provider";
 
 export const metadata = {
   title: "Commithub",
@@ -21,6 +22,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
+          <ModalProvider />
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </body>
       </html>

@@ -1,7 +1,25 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 import { db } from "~/server/db";
+
+// interface StreakType {
+//   name: string;
+//   url: string;
+//   emoji: string;
+//   description: string;
+// }
+
+export const StreakSchema = z.object({
+  name: z.string(),
+  url: z.string().url(),
+  emoji: z.string(),
+  description: z.string(),
+});
 
 export const userRouter = createTRPCRouter({
   getUser: publicProcedure
@@ -13,7 +31,27 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      console.log(res);
+      if (!res) {
+        return { isUser: false };
+      }
+
+      return { isUser: true, user: res };
+    }),
+
+  createNewStreak: protectedProcedure
+    .input(StreakSchema)
+    .query(async ({ input, ctx }) => {
+      const res = await db.streak.create({
+        data: {
+          userId: ctx.user.id,
+          name: input.name,
+          url: input.url,
+          emoji: input.emoji,
+          description: input.description,
+        },
+      });
+
+      console.log("RES: ", res);
 
       return res;
     }),

@@ -3,7 +3,8 @@
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 
-import CommitCalendar from "~/app/_components/CommitCalendar";
+import CommitCalendar from "~/components/CommitCalendar";
+import { useModal } from "~/hooks/use-modal-store";
 // import "react-calendar-heatmap/dist/styles.css";
 // import "~/styles/calStyles.css";
 import { db } from "~/server/db";
@@ -21,14 +22,13 @@ interface UserType {
 }
 
 const Page = ({ params }: UserPageProps) => {
+  const { onOpen } = useModal();
   const { username } = params;
   const { isSignedIn, activeUser, isLoaded } = useUser();
-  const [user, setUser] = useState<null | UserType>(null);
 
-  const res = api.user.getUser.useQuery({ userName: username });
-  console.log(res.data);
+  const user = api.user.getUser.useQuery({ userName: username });
 
-  if (!res.isFetched) return <div>fetching</div>;
+  if (!user.isFetched || !isLoaded) return <div>fetching</div>;
   // useEffect(() => {
   //   async function fetchUserData() {
   //     // try {
@@ -48,9 +48,10 @@ const Page = ({ params }: UserPageProps) => {
   //   fetchUserData().catch(console.error);
   // });
 
-  // if (!user) {
-  //   return <div>No user</div>;
-  // }
+  if (!user.data?.isUser) {
+    return <div>No user</div>;
+  }
+
   // may need to change this auth callback
   // if (!user?.id) redirect(`/auth-callback?origin=/${username}`);
   // if (!user) {
@@ -167,7 +168,12 @@ const Page = ({ params }: UserPageProps) => {
       <div className="p-6"></div>
 
       <div className="flex w-full items-center justify-center">
-        <button className="max-w-[400px] rounded-lg bg-primary-400 px-4 py-3 text-center">
+        <button
+          onClick={() => {
+            onOpen("createStreak");
+          }}
+          className="max-w-[400px] rounded-lg bg-primary-400 px-4 py-3 text-center"
+        >
           Add New Streak
         </button>
       </div>

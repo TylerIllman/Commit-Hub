@@ -19,6 +19,9 @@
     "@libsql/client": "^0.6.2",
     "@prisma/adapter-libsql": "^5.16.1",
     "@prisma/client": "^5.14.0",
+    "@radix-ui/react-dialog": "^1.1.1",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "^5.39.0",
     "@trpc/client": "next",
@@ -41,7 +44,8 @@
     "svix": "^1.24.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.23.3"
+    "zod": "^3.23.3",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@types/eslint": "^8.56.2",

@@ -24,8 +24,7 @@ model Post {
 model User {
     id       String @id @unique
     userName String @unique
-
-    // fullName String
+    fullName String
 
     streak Streak[]
 
