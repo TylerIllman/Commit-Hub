@@ -81,14 +81,14 @@ const Page = ({ params }: UserPageProps) => {
           <div className="p-1"></div>
 
           <div className="flex flex-row items-end gap-4">
-            <span className="flex-nowrap whitespace-nowrap text-xl text-primary-500">
+            <span className="text-primary-500 flex-nowrap whitespace-nowrap text-xl">
               {/* @{user.userName} */}
               @tylerillman
             </span>
-            <span className="flex whitespace-nowrap text-xl text-text-400">
+            <span className="text-text-400 flex whitespace-nowrap text-xl">
               Joined: 05 March 2024
             </span>
-            <span className="whitespace-nowrap text-xl text-text-400">
+            <span className="text-text-400 whitespace-nowrap text-xl">
               Longest Streak: 42
             </span>
             {/* this is my page {user.fullName} */}
@@ -99,13 +99,13 @@ const Page = ({ params }: UserPageProps) => {
 
         <div className="flex w-full justify-end">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center">
-            <span className="text-xl text-text-400">Current Streak</span>
+            <span className="text-text-400 text-xl">Current Streak</span>
             <span className="flex text-6xl font-bold">🔥42</span>
           </div>
         </div>
         <div className=" flex w-full justify-center">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg  p-6 text-center">
-            <span className="text-xl text-text-400">Completed Today</span>
+            <span className="text-text-400 text-xl">Completed Today</span>
 
             <span className="flex text-6xl font-bold">✅ 4</span>
           </div>
@@ -116,32 +116,32 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="flex flex-row gap-4">
         <div
-          className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl"
+          className=" bg-accent-500 flex h-24 w-24 items-center justify-center rounded-full text-6xl"
           onClick={() => {
             console.log("clicked");
           }}
         >
           🐻
         </div>
-        <div className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl">
+        <div className=" bg-accent-500 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🤬
         </div>
-        <div className=" flex h-24 w-24 items-center justify-center rounded-full bg-accent-500 text-6xl">
+        <div className=" bg-accent-500 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🎲
         </div>
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🦓
         </div>
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🐯
         </div>
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🍖
         </div>
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🥓
         </div>
-        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-background-800 text-6xl">
+        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🐽
         </div>
         <div className="flex h-24 w-24 items-center justify-center rounded-full text-6xl">
@@ -151,17 +151,17 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="p-4"></div>
 
-      <div className="w-full rounded-lg bg-background-800 px-6 py-5">
+      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
         <CommitCalendar />
       </div>
 
       <h2 className="pb-4 pt-10 text-5xl font-bold">🐻 LeetCode</h2>
-      <div className="w-full rounded-lg bg-background-800 px-6 py-5">
+      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
         <CommitCalendar />
       </div>
 
       <h2 className="pb-4 pt-10 text-5xl font-bold">🤬 Github Commits</h2>
-      <div className="w-full rounded-lg bg-background-800 px-6 py-5">
+      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
         <CommitCalendar />
       </div>
 
@@ -172,7 +172,7 @@ const Page = ({ params }: UserPageProps) => {
           onClick={() => {
             onOpen("createStreak");
           }}
-          className="max-w-[400px] rounded-lg bg-primary-400 px-4 py-3 text-center"
+          className="bg-primary-400 max-w-[400px] rounded-lg px-4 py-3 text-center"
         >
           Add New Streak
         </button>
