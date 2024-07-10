@@ -22,8 +22,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
-          <ModalProvider />
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <ModalProvider />
+            {children}
+          </TRPCReactProvider>
         </body>
       </html>
     </ClerkProvider>

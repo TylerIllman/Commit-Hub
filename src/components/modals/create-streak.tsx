@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import { api } from "~/trpc/react";
 
 export const createStreakFormSchema = z.object({
   name: z.string().min(1, { message: "A streak name is required" }),
@@ -43,18 +44,20 @@ export const createStreakFormSchema = z.object({
 
 export const CreateStreakModal = () => {
   const { onOpen, isOpen, onClose, type, data } = useModal();
-
   const isModalOpen = isOpen && type === "createStreak";
-
   const [copied, setCopied] = useState(false);
+  const createStreakMutation = api.user.createNewStreak.useMutation();
+
+  // const test = api.user.testMutation.useMutation();
+  // const res = test.mutate();
 
   const form = useForm({
     resolver: zodResolver(createStreakFormSchema),
     defaultValues: {
       name: "",
+      emoji: "",
       url: "",
       description: "",
-      emoji: "",
     },
   });
 
@@ -62,14 +65,20 @@ export const CreateStreakModal = () => {
 
   const onSubmit = async (values: z.infer<typeof createStreakFormSchema>) => {
     console.log("Values: ", values);
+    const cleanVals = {
+      ...values,
+      url: values.url != "" ? values.url : undefined,
+      description: values.descpription != "" ? values.descpription : undefined,
+    };
+    console.log(cleanVals);
+    createStreakMutation.mutate(cleanVals);
+    handleClose();
   };
 
   const handleClose = () => {
     form.reset();
     onClose();
   };
-
-  console.log("in create streak modal");
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>

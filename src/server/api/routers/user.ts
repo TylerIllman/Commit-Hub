@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import {
@@ -41,18 +42,30 @@ export const userRouter = createTRPCRouter({
   createNewStreak: protectedProcedure
     .input(createStreakFormSchema)
     // .input(StreakSchema)
-    .query(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
+      // const test: Prisma.StreakCreateInput = {
+      //   name: "test",
+      //   url: "test",
+      // };
+
       const streakData = {
         userId: ctx.user.id,
         name: input.name,
         emoji: input.emoji,
         ...(input.descpription ? { description: input.descpription } : {}),
-        ...(input.url ? { url: input.url } : {}), // Include URL only if provided
+        ...(input.url ? { url: input.url } : {}),
       };
+
+      console.log(streakData);
 
       const res = await db.streak.create({
         data: streakData,
       });
       return res;
     }),
+
+  testMutation: protectedProcedure.mutation(({ ctx }) => {
+    console.log("in test");
+    return "done";
+  }),
 });

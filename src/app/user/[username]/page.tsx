@@ -24,11 +24,11 @@ interface UserType {
 const Page = ({ params }: UserPageProps) => {
   const { onOpen } = useModal();
   const { username } = params;
-  const { isSignedIn, activeUser, isLoaded } = useUser();
+  const activeUser = useUser();
 
   const user = api.user.getUser.useQuery({ userName: username });
 
-  if (!user.isFetched || !isLoaded) return <div>fetching</div>;
+  if (!user.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
   // useEffect(() => {
   //   async function fetchUserData() {
   //     // try {
@@ -51,6 +51,8 @@ const Page = ({ params }: UserPageProps) => {
   if (!user.data?.isUser) {
     return <div>No user</div>;
   }
+
+  const userOwnsPage = activeUser.user?.id == user.data?.user?.id;
 
   // may need to change this auth callback
   // if (!user?.id) redirect(`/auth-callback?origin=/${username}`);
@@ -167,16 +169,18 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="p-6"></div>
 
-      <div className="flex w-full items-center justify-center">
-        <button
-          onClick={() => {
-            onOpen("createStreak");
-          }}
-          className="bg-primary-400 max-w-[400px] rounded-lg px-4 py-3 text-center"
-        >
-          Add New Streak
-        </button>
-      </div>
+      {userOwnsPage && (
+        <div className="flex w-full items-center justify-center">
+          <button
+            onClick={() => {
+              onOpen("createStreak");
+            }}
+            className="bg-primary-400 max-w-[400px] rounded-lg px-4 py-3 text-center"
+          >
+            Add New Streak
+          </button>
+        </div>
+      )}
     </div>
   );
 };
