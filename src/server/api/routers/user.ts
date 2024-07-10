@@ -14,11 +14,11 @@ import { db } from "~/server/db";
 //   description: string;
 // }
 
-export const StreakSchema = z.object({
+const createStreakFormSchema = z.object({
   name: z.string(),
-  url: z.string().url(),
-  emoji: z.string(),
-  description: z.string(),
+  url: z.string().url().optional(),
+  descpription: z.string().optional(),
+  emoji: z.string().emoji({ message: "This must contain a single emoji" }),
 });
 
 export const userRouter = createTRPCRouter({
@@ -39,20 +39,20 @@ export const userRouter = createTRPCRouter({
     }),
 
   createNewStreak: protectedProcedure
-    .input(StreakSchema)
+    .input(createStreakFormSchema)
+    // .input(StreakSchema)
     .query(async ({ input, ctx }) => {
+      const streakData = {
+        userId: ctx.user.id,
+        name: input.name,
+        emoji: input.emoji,
+        ...(input.descpription ? { description: input.descpription } : {}),
+        ...(input.url ? { url: input.url } : {}), // Include URL only if provided
+      };
+
       const res = await db.streak.create({
-        data: {
-          userId: ctx.user.id,
-          name: input.name,
-          url: input.url,
-          emoji: input.emoji,
-          description: input.description,
-        },
+        data: streakData,
       });
-
-      console.log("RES: ", res);
-
       return res;
     }),
 });

@@ -24,9 +24,21 @@ import {
   FormMessage,
 } from "../ui/form";
 
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Server name is required" }),
-  imageUrl: z.string().url({ message: "Server image is required" }),
+export const createStreakFormSchema = z.object({
+  name: z.string().min(1, { message: "A streak name is required" }),
+  url: z
+    .string()
+    .optional()
+    .refine((data) => !data || z.string().url().safeParse(data).success, {
+      message: "The URL must be in a valid format or left blank",
+    }),
+  descpription: z
+    .string()
+    .max(500, {
+      message: "The descpription must be shorter than 500 characters",
+    })
+    .optional(),
+  emoji: z.string().emoji({ message: "This must contain a single emoji" }),
 });
 
 export const CreateStreakModal = () => {
@@ -37,16 +49,18 @@ export const CreateStreakModal = () => {
   const [copied, setCopied] = useState(false);
 
   const form = useForm({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(createStreakFormSchema),
     defaultValues: {
       name: "",
-      imageUrl: "",
+      url: "",
+      description: "",
+      emoji: "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof createStreakFormSchema>) => {
     console.log("Values: ", values);
   };
 
@@ -62,40 +76,89 @@ export const CreateStreakModal = () => {
       <DialogContent className="overflow-hidden bg-white p-0 text-black">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
-            Create New Streak
+            Create A New Streak
           </DialogTitle>
-          <DialogDescription>
-            Give your server a personality with a name and an image. You can
-            always change it later.
-          </DialogDescription>
+          {/* <DialogDescription>Create a new daily streak</DialogDescription> */}
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="space-y-8 px-6">
-              {/* <div className="flex items-center justify-center text-center"> */}
-              {/* <FormField */}
-              {/*   control={form.control} */}
-              {/*   name="imageUrl" */}
-              {/*   render={({ field }) => ( */}
-              {/*     <FormItem> */}
-              {/*       <FormControl></FormControl> */}
-              {/*     </FormItem> */}
-              {/*   )} */}
-              {/* /> */}
-              {/* </div> */}
+            <div className="space-y-6 px-6">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
-                      Server name
+                      Streak name
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
                         className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
-                        placeholder="Enter server name"
+                        placeholder="Enter the streak name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="emoji"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                      Emoji
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isLoading}
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="Add an Emoji to represent this streak"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                      Url
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isLoading}
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="Enter a URL"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                      Description
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isLoading}
+                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        placeholder="Enter a short description"
                         {...field}
                       />
                     </FormControl>
@@ -105,7 +168,7 @@ export const CreateStreakModal = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button disabled={isLoading}>Create</Button>
+              <Button disabled={isLoading}>Create New Streak</Button>
             </DialogFooter>
           </form>
         </Form>

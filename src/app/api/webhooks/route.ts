@@ -60,6 +60,9 @@ export async function POST(req: Request) {
 
   const { id } = evt.data;
   const username = evt.data.username;
+  const firstName = evt.data.first_name;
+  const lastName = evt.data.last_name;
+  const email = evt.data.email_addresses[0]?.email_address;
   // console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
   // console.log("Webhook body:", body);
 
@@ -76,6 +79,9 @@ export async function POST(req: Request) {
       data: {
         id: id,
         userName: username,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
       },
     });
   }
