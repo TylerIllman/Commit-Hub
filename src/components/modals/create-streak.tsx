@@ -46,7 +46,7 @@ export const CreateStreakModal = () => {
   const { onOpen, isOpen, onClose, type, data } = useModal();
   const isModalOpen = isOpen && type === "createStreak";
   const [copied, setCopied] = useState(false);
-  const createStreakMutation = api.user.createNewStreak.useMutation();
+  const createStreakMutation = api.streaks.createNewStreak.useMutation();
 
   // const test = api.user.testMutation.useMutation();
   // const res = test.mutate();

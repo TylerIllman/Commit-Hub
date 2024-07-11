@@ -6,7 +6,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className=" flex min-h-screen justify-center overflow-scroll bg-primary-950 px-8 py-8 text-text-50">
+    <div className=" bg-primary-950 text-text-50 flex min-h-screen justify-center overflow-scroll px-8 py-8">
       {children}
     </div>
   );

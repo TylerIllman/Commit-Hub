@@ -16,12 +16,8 @@ interface UserPageProps {
   };
 }
 
-interface UserType {
-  userName: string;
-  id: string;
-}
-
 const Page = ({ params }: UserPageProps) => {
+  // TODO: Need to add an auth callback for when user doesnt exist, or is missing details
   const { onOpen } = useModal();
   const { username } = params;
   const activeUser = useUser();
@@ -29,42 +25,12 @@ const Page = ({ params }: UserPageProps) => {
   const user = api.user.getUser.useQuery({ userName: username });
 
   if (!user.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
-  // useEffect(() => {
-  //   async function fetchUserData() {
-  //     // try {
-  //     // const res = await db.user.findFirst({
-  //     //   where: {
-  //     //     userName: username,
-  //     //   },
-  //     // });
-  //     // setUser(res);
-  //     // } catch (error) {
-  //     //   console.log(error);
-  //     // }
-  //     const res = api.user.getUser.useQuery({ userName: "ty" });
-  //     console.log(res);
-  //   }
-  //
-  //   fetchUserData().catch(console.error);
-  // });
 
   if (!user.data?.isUser) {
     return <div>No user</div>;
   }
 
   const userOwnsPage = activeUser.user?.id == user.data?.user?.id;
-
-  // may need to change this auth callback
-  // if (!user?.id) redirect(`/auth-callback?origin=/${username}`);
-  // if (!user) {
-  //   return (
-  //     <div className="max-w-[1600] bg-accent-950">
-  //       <div className="bg-primary-100">
-  //         this is someone elses page {username}
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="flex w-full max-w-[1600px] flex-col">
