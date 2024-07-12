@@ -4,6 +4,8 @@ import { useUser } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 
 import CommitCalendar from "~/components/CommitCalendar";
+import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
 import { useModal } from "~/hooks/use-modal-store";
 // import "react-calendar-heatmap/dist/styles.css";
 // import "~/styles/calStyles.css";
@@ -15,6 +17,10 @@ interface UserPageProps {
     username: string;
   };
 }
+
+const onStreakClick = (test: string) => {
+  console.log(test);
+};
 
 const Page = ({ params }: UserPageProps) => {
   // TODO: Need to add an auth callback for when user doesnt exist, or is missing details
@@ -49,14 +55,14 @@ const Page = ({ params }: UserPageProps) => {
           <div className="p-1"></div>
 
           <div className="flex flex-row items-end gap-4">
-            <span className="text-primary-500 flex-nowrap whitespace-nowrap text-xl">
+            <span className="flex-nowrap whitespace-nowrap text-xl text-blue-600">
               {/* @{user.userName} */}
               @tylerillman
             </span>
-            <span className="text-text-400 flex whitespace-nowrap text-xl">
+            <span className="flex whitespace-nowrap text-xl text-muted-foreground">
               Joined: 05 March 2024
             </span>
-            <span className="text-text-400 whitespace-nowrap text-xl">
+            <span className="whitespace-nowrap text-xl text-muted-foreground">
               Longest Streak: 42
             </span>
             {/* this is my page {user.fullName} */}
@@ -82,56 +88,53 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="p-2"></div>
 
-      <div className="flex flex-row gap-4">
-        <div
-          className=" bg-accent-500 flex h-24 w-24 items-center justify-center rounded-full text-6xl"
+      <div className="flex flex-row items-center gap-4">
+        <Button
+          key={"test"}
+          size={"toggleIcon"}
+          variant={"toggleIconActive"}
           onClick={() => {
-            console.log("clicked");
+            onStreakClick("test");
           }}
         >
-          🐻
-        </div>
-        <div className=" bg-accent-500 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          🤬
-        </div>
-        <div className=" bg-accent-500 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          🎲
-        </div>
-        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          🦓
-        </div>
-        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          🐯
-        </div>
-        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          🍖
-        </div>
-        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          🥓
-        </div>
-        <div className="bg-background-800 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          🐽
-        </div>
-        <div className="flex h-24 w-24 items-center justify-center rounded-full text-6xl">
-          ➕
-        </div>
+          😎
+        </Button>
+        <Button size={"toggleIcon"} variant={"toggleIconActive"}>
+          🌹
+        </Button>
+        <Button size={"toggleIcon"} variant={"toggleIconInactive"}>
+          🙋🏼‍
+        </Button>
+        <Button size={"toggleIcon"} variant={"toggleIconInactive"}>
+          👾
+        </Button>
       </div>
 
       <div className="p-4"></div>
 
-      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
-        <CommitCalendar />
-      </div>
+      <Card>
+        <div className="p-6">
+          <CommitCalendar />
+        </div>
+      </Card>
 
-      <h2 className="pb-4 pt-10 text-5xl font-bold">🐻 LeetCode</h2>
-      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
-        <CommitCalendar />
-      </div>
+      <div className="p-4"></div>
 
-      <h2 className="pb-4 pt-10 text-5xl font-bold">🤬 Github Commits</h2>
-      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
-        <CommitCalendar />
-      </div>
+      <Card>
+        <div className="p-6">
+          <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2>
+          <CommitCalendar />
+        </div>
+      </Card>
+
+      <div className="p-4"></div>
+
+      <Card>
+        <div className="p-6">
+          <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2>
+          <CommitCalendar />
+        </div>
+      </Card>
 
       <div className="p-6"></div>
 

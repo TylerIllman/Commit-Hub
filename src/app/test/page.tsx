@@ -21,11 +21,11 @@ const Page = () => {
           <div className="p-1"></div>
 
           <div className="flex flex-row items-end gap-4">
-            <span className="text-primary-500 flex-nowrap whitespace-nowrap text-xl">
+            <span className=" flex-nowrap whitespace-nowrap text-xl">
               {/* @{user.userName} */}
               @tylerillman
             </span>
-            <span className="text-text-400 flex whitespace-nowrap text-xl">
+            <span className="text--400 flex whitespace-nowrap text-xl">
               Joined: 05 March 2024
             </span>
             <span className="text-text-400 whitespace-nowrap text-xl">
@@ -63,6 +63,7 @@ const Page = () => {
         >
           🐻
         </div>
+
         <div className=" bg-accent-500 flex h-24 w-24 items-center justify-center rounded-full text-6xl">
           🤬
         </div>
@@ -70,17 +71,17 @@ const Page = () => {
 
       <div className="p-4"></div>
 
-      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
+      <div className="w-full rounded-lg bg-card px-6 py-5">
         <CommitCalendar />
       </div>
 
       <h2 className="pb-4 pt-10 text-5xl font-bold">🐻 LeetCode</h2>
-      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
+      <div className="w-full rounded-lg bg-card px-6 py-5">
         <CommitCalendar />
       </div>
 
       <h2 className="pb-4 pt-10 text-5xl font-bold">🤬 Github Commits</h2>
-      <div className="bg-background-800 w-full rounded-lg px-6 py-5">
+      <div className="w-full rounded-lg bg-card px-6 py-5">
         <CommitCalendar />
       </div>
 

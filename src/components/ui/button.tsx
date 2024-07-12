@@ -9,6 +9,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        toggleIconActive:
+          "bg-primary border flex items-center justify-center rounded-full text-6xl hover:bg-card",
+        toggleIconInactive:
+          "bg-card border flex items-center justify-center rounded-full text-6xl hover:bg-primary",
         default:
           "bg-slate-900 text-slate-50 hover:bg-slate-900/90 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
         destructive:
@@ -26,6 +30,7 @@ const buttonVariants = cva(
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        toggleIcon: "h-24 w-24",
       },
     },
     defaultVariants: {
