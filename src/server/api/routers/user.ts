@@ -38,4 +38,19 @@ export const userRouter = createTRPCRouter({
 
       return { isUser: true, user: res };
     }),
+  getUserStreaks: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const res = await db.streak.findMany({
+        where: {
+          userId: input.id,
+        },
+      });
+
+      if (!res) {
+        return { hasStreaks: false };
+      }
+
+      return { hasStreaks: true, streaks: res };
+    }),
 });

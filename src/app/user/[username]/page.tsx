@@ -7,9 +7,6 @@ import CommitCalendar from "~/components/CommitCalendar";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { useModal } from "~/hooks/use-modal-store";
-// import "react-calendar-heatmap/dist/styles.css";
-// import "~/styles/calStyles.css";
-import { db } from "~/server/db";
 import { api } from "~/trpc/react";
 
 interface UserPageProps {
@@ -30,9 +27,22 @@ const Page = ({ params }: UserPageProps) => {
 
   const user = api.user.getUser.useQuery({ userName: username });
 
+  const userId = user.data?.user?.id;
+
+  const userStreaks = api.user.getUserStreaks.useQuery(
+    {
+      id: userId,
+    },
+    { enabled: !!userId },
+  );
+
+  if (userStreaks?.data?.hasStreaks) {
+    console.log("streaks: ", userStreaks.data.streaks);
+  }
+
   if (!user.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
 
-  if (!user.data?.isUser) {
+  if (!user.data?.isUser || !user.data.user) {
     return <div>No user</div>;
   }
 
@@ -89,25 +99,24 @@ const Page = ({ params }: UserPageProps) => {
       <div className="p-2"></div>
 
       <div className="flex flex-row items-center gap-4">
-        <Button
-          key={"test"}
-          size={"toggleIcon"}
-          variant={"toggleIconActive"}
-          onClick={() => {
-            onStreakClick("test");
-          }}
-        >
-          😎
-        </Button>
-        <Button size={"toggleIcon"} variant={"toggleIconActive"}>
-          🌹
-        </Button>
-        <Button size={"toggleIcon"} variant={"toggleIconInactive"}>
-          🙋🏼‍
-        </Button>
-        <Button size={"toggleIcon"} variant={"toggleIconInactive"}>
-          👾
-        </Button>
+        <div className="flex flex-row items-center gap-4">
+          {userStreaks.data?.streaks!.length > 0 ? (
+            userStreaks.data?.streaks!.map((streak, index) => (
+              <Button
+                key={`streakbutton-${streak.id}`}
+                size={"toggleIcon"}
+                variant={"toggleIconInactive"}
+                onClick={() => {
+                  onStreakClick("test");
+                }}
+              >
+                {streak.emoji}
+              </Button>
+            ))
+          ) : (
+            <div>No streaks found</div>
+          )}
+        </div>
       </div>
 
       <div className="p-4"></div>
