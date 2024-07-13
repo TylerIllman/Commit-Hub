@@ -22,6 +22,10 @@ const createStreakFormSchema = z.object({
   emoji: z.string().emoji({ message: "This must contain a single emoji" }),
 });
 
+const addStreakCompletionSchema = z.object({
+  streakId: z.number(),
+});
+
 export const streaksRouter = createTRPCRouter({
   createNewStreak: protectedProcedure
     .input(createStreakFormSchema)
@@ -41,5 +45,53 @@ export const streaksRouter = createTRPCRouter({
         data: streakData,
       });
       return res;
+    }),
+
+  addStreakCompletion: protectedProcedure
+    .input(addStreakCompletionSchema)
+    .mutation(async ({ input, ctx }) => {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0); // Start of today
+
+      const todayEnd = new Date();
+      todayEnd.setHours(23, 59, 59, 999); // End of today
+
+      // Find if there's an existing completion for today linked to the current user
+      const existingCompletion = await db.streakCompletion.findFirst({
+        where: {
+          streakId: input.streakId,
+          createdAt: {
+            gte: todayStart,
+            lte: todayEnd,
+          },
+          streak: {
+            userId: ctx.user.id, // Ensure the Streak belongs to the current user
+          },
+        },
+        include: {
+          streak: true, // Optionally include streak details if needed elsewhere
+        },
+      });
+
+      if (existingCompletion) {
+        // If exists, update (if updating logic is necessary)
+        return await db.streakCompletion.update({
+          where: {
+            id: existingCompletion.id,
+          },
+          data: {
+            updatedAt: new Date(), // Optionally update some data
+          },
+        });
+      } else {
+        // If not exists, create new
+        return await db.streakCompletion.create({
+          data: {
+            streakId: input.streakId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        });
+      }
     }),
 });

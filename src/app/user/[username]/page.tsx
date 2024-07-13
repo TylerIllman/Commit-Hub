@@ -15,10 +15,6 @@ interface UserPageProps {
   };
 }
 
-const onStreakClick = (test: string) => {
-  console.log(test);
-};
-
 const Page = ({ params }: UserPageProps) => {
   // TODO: Need to add an auth callback for when user doesnt exist, or is missing details
   const { onOpen } = useModal();
@@ -26,8 +22,10 @@ const Page = ({ params }: UserPageProps) => {
   const activeUser = useUser();
 
   const user = api.user.getUser.useQuery({ userName: username });
-
   const userId = user.data?.user?.id;
+
+  const streakCompletionMutation =
+    api.streaks.addStreakCompletion.useMutation();
 
   const userStreaks = api.user.getUserStreaks.useQuery(
     {
@@ -47,6 +45,13 @@ const Page = ({ params }: UserPageProps) => {
   }
 
   const userOwnsPage = activeUser.user?.id == user.data?.user?.id;
+
+  // NOTE: could error exist where date of PC running server is different to client?
+  const onStreakClick = (streakId: number) => {
+    streakCompletionMutation.mutate({
+      streakId,
+    });
+  };
 
   return (
     <div className="flex w-full max-w-[1600px] flex-col">
@@ -107,7 +112,7 @@ const Page = ({ params }: UserPageProps) => {
                 size={"toggleIcon"}
                 variant={"toggleIconInactive"}
                 onClick={() => {
-                  onStreakClick("test");
+                  onStreakClick(streak.id);
                 }}
               >
                 {streak.emoji}
