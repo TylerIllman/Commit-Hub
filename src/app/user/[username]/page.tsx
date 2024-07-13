@@ -27,6 +27,20 @@ const Page = ({ params }: UserPageProps) => {
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
 
+  const dateStart = new Date();
+  dateStart.setHours(0, 0, 0, 0); // Start of today
+  dateStart.setDate(dateStart.getDate() - 365);
+
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999); // End of today
+
+  const testStreaks = api.user.getStreakCompletions.useQuery({
+    startDate: dateStart,
+    endDate: todayEnd,
+  });
+
+  console.log("Test streaks: ", testStreaks.data);
+
   const userStreaks = api.user.getUserStreaks.useQuery(
     {
       id: userId,

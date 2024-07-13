@@ -75,14 +75,15 @@ export const streaksRouter = createTRPCRouter({
 
       if (existingCompletion) {
         // If exists, update (if updating logic is necessary)
-        return await db.streakCompletion.update({
-          where: {
-            id: existingCompletion.id,
-          },
-          data: {
-            updatedAt: new Date(), // Optionally update some data
-          },
-        });
+        // return await db.streakCompletion.update({
+        //   where: {
+        //     id: existingCompletion.id,
+        //   },
+        //   data: {
+        //     updatedAt: new Date(), // Optionally update some data
+        //   },
+        // });
+        return existingCompletion;
       } else {
         // If not exists, create new
         return await db.streakCompletion.create({
