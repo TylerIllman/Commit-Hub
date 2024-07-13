@@ -34,12 +34,13 @@ const Page = ({ params }: UserPageProps) => {
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999); // End of today
 
-  const testStreaks = api.user.getStreakCompletions.useQuery({
-    startDate: dateStart,
-    endDate: todayEnd,
-  });
-
-  console.log("Test streaks: ", testStreaks.data);
+  const streakCompletionsRes = api.user.getStreakCompletions.useQuery(
+    {
+      startDate: dateStart,
+      endDate: todayEnd,
+    },
+    { enabled: !!userId },
+  );
 
   const userStreaks = api.user.getUserStreaks.useQuery(
     {
@@ -48,9 +49,9 @@ const Page = ({ params }: UserPageProps) => {
     { enabled: !!userId },
   );
 
-  if (userStreaks?.data?.hasStreaks) {
-    console.log("streaks: ", userStreaks.data.streaks);
-  }
+  // if (userStreaks?.data?.hasStreaks) {
+  //   console.log("streaks: ", userStreaks.data.streaks);
+  // }
 
   if (!user.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
 
@@ -140,30 +141,65 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="p-4"></div>
 
-      <Card>
-        <div className="p-6">
-          <CommitCalendar />
-        </div>
-      </Card>
+      {streakCompletionsRes.isFetched ? (
+        <Card>
+          <div className="p-6">
+            <CommitCalendar
+              values={streakCompletionsRes.data?.totalCompletionsByDate}
+            />
+          </div>
+        </Card>
+      ) : (
+        <div>loading</div>
+      )}
 
       <div className="p-4"></div>
+      {userStreaks.data?.streaks!.length > 0 &&
+      streakCompletionsRes.isFetched ? (
+        userStreaks.data?.streaks!.map((streak, index) => (
+          <>
+            <Card key={`commitCal-${streak.id}`}>
+              <div className="p-6">
+                <h2 className="pb-4 text-5xl font-bold md:text-4xl">
+                  {streak.emoji} {streak.name}
+                </h2>
+                <CommitCalendar
+                  values={
+                    streakCompletionsRes.data?.streakCompletions[streak.id]
+                  }
+                />
+              </div>
+            </Card>
+            <div className="p-4"></div>
+          </>
+        ))
+      ) : (
+        <div>No streaks found</div>
+      )}
 
-      <Card>
-        <div className="p-6">
-          <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2>
-          <CommitCalendar />
-        </div>
-      </Card>
-
-      <div className="p-4"></div>
-
-      <Card>
-        <div className="p-6">
-          <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2>
-          <CommitCalendar />
-        </div>
-      </Card>
-
+      {/* <Card> */}
+      {/*   <div className="p-6"> */}
+      {/*     <CommitCalendar /> */}
+      {/*   </div> */}
+      {/* </Card> */}
+      {/**/}
+      {/* <div className="p-4"></div> */}
+      {/**/}
+      {/* <Card> */}
+      {/*   <div className="p-6"> */}
+      {/*     <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2> */}
+      {/*     <CommitCalendar /> */}
+      {/*   </div> */}
+      {/* </Card> */}
+      {/**/}
+      {/**/}
+      {/* <Card> */}
+      {/*   <div className="p-6"> */}
+      {/*     <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2> */}
+      {/*     <CommitCalendar /> */}
+      {/*   </div> */}
+      {/* </Card> */}
+      {/**/}
       <div className="p-6"></div>
 
       {userOwnsPage && (

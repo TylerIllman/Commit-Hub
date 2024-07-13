@@ -28,13 +28,13 @@ const streakCompletionSchema = z.object({
   endDate: z.date(),
 });
 
-interface CompletionDetails {
+type CalendarValue = {
   date: Date;
-  numCompletions: number;
-}
+  count: number;
+};
 // Using Record utility type to define StreakCompletions
-type DailyStreakCompletions = Record<string, CompletionDetails>;
-type StreakCompletionsObject = Record<number, DailyStreakCompletions>;
+// type DailyStreakCompletions = Record<string, CompletionDetails>;
+type StreakCompletionsObject = Record<number, CalendarValue[]>;
 
 export const userRouter = createTRPCRouter({
   getUser: publicProcedure
@@ -87,7 +87,7 @@ export const userRouter = createTRPCRouter({
       });
 
       const streakCompletions: StreakCompletionsObject = {};
-      const totalCompletionsByDate: CompletionDetails[] = [];
+      const totalCompletionsByDate: CalendarValue[] = [];
       let currentDate: null | string = null;
       let currentNumCompletions = 0;
 
@@ -104,7 +104,7 @@ export const userRouter = createTRPCRouter({
           if (currentDate !== null) {
             totalCompletionsByDate.push({
               date: new Date(currentDate),
-              numCompletions: currentNumCompletions,
+              count: currentNumCompletions,
             });
           }
           currentDate = newDate;
@@ -114,7 +114,7 @@ export const userRouter = createTRPCRouter({
         // Add completion details directly to the streak array
         streakCompletions[completion.streakId].push({
           date: completion.createdAt,
-          numCompletions: 1, // Assuming each completion record counts as one completion
+          count: 1, // Assuming each completion record counts as one completion
         });
       });
 
@@ -122,7 +122,7 @@ export const userRouter = createTRPCRouter({
       if (completions.length > 0) {
         totalCompletionsByDate.push({
           date: new Date(currentDate),
-          numCompletions: currentNumCompletions,
+          count: currentNumCompletions,
         });
       }
 

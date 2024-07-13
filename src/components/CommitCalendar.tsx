@@ -10,22 +10,26 @@ type CalendarValue = {
   count: number;
 };
 
+interface CommitCalendarProps {
+  values: CalendarValue[];
+}
+
 const today: Date = new Date();
 
-const CommitCalendar: React.FC = () => {
-  const randomValues: CalendarValue[] = getRange(365).map((index) => {
-    return {
-      date: shiftDate(today, -index),
-      count: getRandomInt(1, 3),
-    };
-  });
+const CommitCalendar: React.FC<CommitCalendarProps> = ({ values }) => {
+  // const randomValues: CalendarValue[] = getRange(365).map((index) => {
+  //   return {
+  //     date: shiftDate(today, -index),
+  //     count: getRandomInt(1, 3),
+  //   };
+  // });
   // Example data
   return (
     <>
       <CalendarHeatmap
         startDate={shiftDate(today, -365)}
         endDate={today}
-        values={randomValues}
+        values={values}
         classForValue={(value) => {
           if (!value) {
             return "color-empty";
@@ -33,11 +37,12 @@ const CommitCalendar: React.FC = () => {
           return `color-github-${value.count}`;
         }}
         tooltipDataAttrs={(value: CalendarValue | null) => {
-          if (!value) {
+          if (!value.date) {
             return {};
           }
           return {
             "data-tooltip-id": "daily-tooltip",
+            // "data-tooltip-content": `test`,
             "data-tooltip-content": `${value.count} submissions on ${value.date.toISOString().slice(0, 10)}`,
           };
         }}
