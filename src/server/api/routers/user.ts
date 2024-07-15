@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { Record } from "@prisma/client/runtime/library";
 import { z } from "zod";
+import { Streak } from "@prisma/client";
 
 import {
   createTRPCRouter,
@@ -24,6 +25,7 @@ const createStreakFormSchema = z.object({
 });
 
 const streakCompletionSchema = z.object({
+  userId: z.string(),
   startDate: z.date(),
   endDate: z.date(),
 });
@@ -32,9 +34,11 @@ type CalendarValue = {
   date: Date;
   count: number;
 };
-// Using Record utility type to define StreakCompletions
-// type DailyStreakCompletions = Record<string, CompletionDetails>;
 type StreakCompletionsObject = Record<number, CalendarValue[]>;
+
+type streakWithCompletion = Streak & {
+  completions: CalendarValue[];
+};
 
 export const userRouter = createTRPCRouter({
   getUser: publicProcedure
@@ -52,20 +56,93 @@ export const userRouter = createTRPCRouter({
 
       return { isUser: true, user: res };
     }),
+
   getUserStreaks: publicProcedure
-    .input(z.object({ id: z.string() }))
+    .input(streakCompletionSchema)
     .query(async ({ input }) => {
-      const res = await db.streak.findMany({
+      const streaks = await db.streak.findMany({
         where: {
-          userId: input.id,
+          userId: input.userId,
         },
       });
 
-      if (!res) {
+      if (!streaks) {
         return { hasStreaks: false };
       }
 
-      return { hasStreaks: true, streaks: res };
+      const completions = await db.streakCompletion.findMany({
+        where: {
+          streak: {
+            userId: input.userId,
+          },
+          createdAt: {
+            gte: input.startDate,
+            lte: input.endDate,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      const streakCompletions: StreakCompletionsObject = {};
+      const totalCompletionsByDate: CalendarValue[] = [];
+      let currentDate: null | string = null;
+      let currentNumCompletions = 0;
+
+      completions.forEach((completion) => {
+        const newDate = completion.createdAt.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+
+        if (!streakCompletions[completion.streakId]) {
+          streakCompletions[completion.streakId] = [];
+        }
+
+        if (currentDate === newDate) {
+          currentNumCompletions++;
+        } else {
+          if (currentDate !== null) {
+            totalCompletionsByDate.push({
+              date: new Date(currentDate),
+              count: currentNumCompletions,
+            });
+          }
+          currentDate = newDate;
+          currentNumCompletions = 1; // Reset for the new date
+        }
+
+        // Add completion details directly to the streak array
+        streakCompletions[completion.streakId].push({
+          date: completion.createdAt,
+          count: 1, // Assuming each completion record counts as one completion
+        });
+      });
+
+      // Ensure the last date's data is added
+      if (completions.length > 0) {
+        totalCompletionsByDate.push({
+          date: new Date(currentDate),
+          count: currentNumCompletions,
+        });
+      }
+
+      // console.log("Streak-specific completions:", streakCompletions);
+      // console.log("Total completions by date:", totalCompletionsByDate);
+      // console.log("streaks: ", streaks);
+
+      const streaksWithCompletion: streakWithCompletion = streaks.map(
+        (streak) => ({
+          ...streak,
+          completions: streakCompletions[streak.id] ?? [],
+        }),
+      );
+
+      console.log("streaksWithCompletion:", streaksWithCompletion);
+
+      return {
+        hasStreaks: true,
+        streaks: streaksWithCompletion,
+        masterStreak: totalCompletionsByDate,
+      };
     }),
 
   getStreakCompletions: publicProcedure

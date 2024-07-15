@@ -34,17 +34,19 @@ const Page = ({ params }: UserPageProps) => {
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999); // End of today
 
-  const streakCompletionsRes = api.user.getStreakCompletions.useQuery(
-    {
-      startDate: dateStart,
-      endDate: todayEnd,
-    },
-    { enabled: !!userId },
-  );
+  // const streakCompletionsRes = api.user.getStreakCompletions.useQuery(
+  //   {
+  //     startDate: dateStart,
+  //     endDate: todayEnd,
+  //   },
+  //   { enabled: !!userId },
+  // );
 
   const userStreaks = api.user.getUserStreaks.useQuery(
     {
-      id: userId,
+      userId: userId,
+      startDate: dateStart,
+      endDate: todayEnd,
     },
     { enabled: !!userId },
   );
@@ -114,7 +116,8 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="flex flex-row items-center gap-4">
         <div className="flex flex-row items-center gap-4">
-          {userStreaks.data?.streaks!.length > 0 ? (
+          {/* TODO: Add a type var to streak */}
+          {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
             userStreaks.data?.streaks!.map((streak, index) => (
               <Button
                 key={`streakbutton-${streak.id}`}
@@ -136,13 +139,11 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="p-4"></div>
 
-      {streakCompletionsRes.isFetched ? (
+      {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
         //TODO: Add link and description rendering
         <Card>
           <div className="p-6">
-            <CommitCalendar
-              values={streakCompletionsRes.data?.totalCompletionsByDate}
-            />
+            <CommitCalendar values={userStreaks.data.masterStreak} />
           </div>
         </Card>
       ) : (
@@ -150,53 +151,23 @@ const Page = ({ params }: UserPageProps) => {
       )}
 
       <div className="p-4"></div>
-      {userStreaks.data?.streaks!.length > 0 &&
-      streakCompletionsRes.isFetched ? (
-        userStreaks.data?.streaks!.map((streak, index) => (
-          <>
-            <Card key={`commitCal-${streak.id}`}>
+      {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
+        userStreaks.data.streaks.map((streak, index) => (
+          <div key={`commitCal-${streak.id}`}>
+            <Card>
               <div className="p-6">
                 <h2 className="pb-4 text-5xl font-bold md:text-4xl">
                   {streak.emoji} {streak.name}
                 </h2>
-                <CommitCalendar
-                  values={
-                    streakCompletionsRes.data?.streakCompletions[streak.id]
-                  }
-                />
+                <CommitCalendar values={streak.completions} />
               </div>
             </Card>
             <div className="p-4"></div>
-          </>
+          </div>
         ))
       ) : (
         <div>No streaks found</div>
       )}
-
-      {/* <Card> */}
-      {/*   <div className="p-6"> */}
-      {/*     <CommitCalendar /> */}
-      {/*   </div> */}
-      {/* </Card> */}
-      {/**/}
-      {/* <div className="p-4"></div> */}
-      {/**/}
-      {/* <Card> */}
-      {/*   <div className="p-6"> */}
-      {/*     <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2> */}
-      {/*     <CommitCalendar /> */}
-      {/*   </div> */}
-      {/* </Card> */}
-      {/**/}
-      {/**/}
-      {/* <Card> */}
-      {/*   <div className="p-6"> */}
-      {/*     <h2 className="pb-4 text-5xl font-bold md:text-4xl">🐻 LeetCode</h2> */}
-      {/*     <CommitCalendar /> */}
-      {/*   </div> */}
-      {/* </Card> */}
-      {/**/}
-      <div className="p-6"></div>
 
       {userOwnsPage && (
         <div className="flex w-full items-center justify-center">
