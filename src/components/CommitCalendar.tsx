@@ -2,6 +2,7 @@
 
 import CalendarHeatmap from "react-calendar-heatmap";
 import { Tooltip } from "react-tooltip";
+//TODO: Create custom stylings for heatmap cal
 import "react-calendar-heatmap/dist/styles.css";
 import "react-tooltip/dist/react-tooltip.css";
 

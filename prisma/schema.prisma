@@ -22,6 +22,7 @@ model Post {
 }
 
 model User {
+    //TODO: Add createdAt & updatedAt to User table
     id        String @id @unique
     userName  String @unique
     firstName String

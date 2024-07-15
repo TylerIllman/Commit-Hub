@@ -71,14 +71,10 @@ const Page = ({ params }: UserPageProps) => {
   return (
     <div className="flex w-full max-w-[1600px] flex-col">
       <div className="flex w-full justify-start gap-2">
-        {/* TODO: replace smile with the user's emoji */}
-
         <div className="flex flex-col">
-          {/* TODO: add full name to local db */}
           <div className="flex flex-row items-center gap-4">
-            {/* TODO: figure out how to give width preference to this di */}
             <h1 className="whitespace-nowrap text-8xl font-bold">
-              Tyler Illman
+              {user.data.user.firstName} {user.data.user.lastName}
             </h1>
           </div>
 
@@ -86,16 +82,14 @@ const Page = ({ params }: UserPageProps) => {
 
           <div className="flex flex-row items-end gap-4">
             <span className="flex-nowrap whitespace-nowrap text-xl text-blue-600">
-              {/* @{user.userName} */}
-              @tylerillman
+              @{user.data.user.userName}
             </span>
             <span className="flex whitespace-nowrap text-xl text-muted-foreground">
-              Joined: 05 March 2024
+              Joined: May 2024
             </span>
             <span className="whitespace-nowrap text-xl text-muted-foreground">
               Longest Streak: 42
             </span>
-            {/* this is my page {user.fullName} */}
           </div>
 
           <div className="p-2"></div>
@@ -125,6 +119,7 @@ const Page = ({ params }: UserPageProps) => {
               <Button
                 key={`streakbutton-${streak.id}`}
                 size={"toggleIcon"}
+                //TODO: Add ability to toggle active or inactive button
                 variant={"toggleIconInactive"}
                 onClick={() => {
                   onStreakClick(streak.id);
@@ -142,6 +137,7 @@ const Page = ({ params }: UserPageProps) => {
       <div className="p-4"></div>
 
       {streakCompletionsRes.isFetched ? (
+        //TODO: Add link and description rendering
         <Card>
           <div className="p-6">
             <CommitCalendar
