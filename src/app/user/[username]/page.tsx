@@ -1,13 +1,24 @@
 "use client";
 
 import { useUser } from "@clerk/clerk-react";
+import { StreakCompletion } from "@prisma/client";
+import { Type } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import CommitCalendar from "~/components/CommitCalendar";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { useModal } from "~/hooks/use-modal-store";
+import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
+
+function isSameDay(d1: Date, d2: Date) {
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate()
+  );
+}
 
 interface UserPageProps {
   params: {
@@ -117,26 +128,55 @@ const Page = ({ params }: UserPageProps) => {
       <div className="flex flex-row items-center gap-4">
         <div className="flex flex-row items-center gap-4">
           {/* TODO: Add a type var to streak */}
-          {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
-            userStreaks.data?.streaks!.map((streak, index) => (
-              <Button
-                key={`streakbutton-${streak.id}`}
-                size={"toggleIcon"}
-                //TODO: Add ability to toggle active or inactive button
-                variant={"toggleIconInactive"}
-                onClick={() => {
-                  onStreakClick(streak.id);
-                }}
-              >
-                {streak.emoji}
-              </Button>
-            ))
+          {userOwnsPage ? (
+            userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
+              userStreaks.data.streaks.map((streak, index) => {
+                const today = new Date();
+                return (
+                  <Button
+                    key={`streakbutton-${streak.id}`}
+                    size="toggleIcon"
+                    //TODO: Add ability to toggle active or inactive button using global state so doesnt require another DB call
+                    variant={
+                      isSameDay(streak.completions[0].date, today)
+                        ? "toggleIconActive"
+                        : "toggleIconInactive"
+                    }
+                    onClick={() => onStreakClick(streak.id)}
+                  >
+                    {streak.emoji}
+                  </Button>
+                );
+              })
+            ) : (
+              <div>No streaks found</div>
+            )
+          ) : userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
+            userStreaks.data.streaks.map((streak, index) => {
+              const today = new Date();
+              console.log("user doesn't own page: ", userOwnsPage);
+              return (
+                <div
+                  key={`streakbutton-${streak.id}`}
+                  className={cn(
+                    "flex h-24 w-24 items-center justify-center rounded-full border bg-card text-6xl",
+                    {
+                      "bg-primary": isSameDay(
+                        streak.completions[0].date,
+                        today,
+                      ),
+                    },
+                  )}
+                >
+                  {streak.emoji}
+                </div>
+              );
+            })
           ) : (
-            <div>No streaks found</div>
+            <div>Loading Streaks</div>
           )}
         </div>
       </div>
-
       <div className="p-4"></div>
 
       {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (

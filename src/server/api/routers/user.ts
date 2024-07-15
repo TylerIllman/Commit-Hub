@@ -10,20 +10,6 @@ import {
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
 
-// interface StreakType {
-//   name: string;
-//   url: string;
-//   emoji: string;
-//   description: string;
-// }
-
-const createStreakFormSchema = z.object({
-  name: z.string(),
-  url: z.string().url().optional(),
-  descpription: z.string().optional(),
-  emoji: z.string().emoji({ message: "This must contain a single emoji" }),
-});
-
 const streakCompletionSchema = z.object({
   userId: z.string(),
   startDate: z.date(),
@@ -143,69 +129,5 @@ export const userRouter = createTRPCRouter({
         streaks: streaksWithCompletion,
         masterStreak: totalCompletionsByDate,
       };
-    }),
-
-  getStreakCompletions: publicProcedure
-    .input(streakCompletionSchema)
-    .query(async ({ input, ctx }) => {
-      const completions = await db.streakCompletion.findMany({
-        where: {
-          streak: {
-            userId: ctx.user?.id,
-          },
-          createdAt: {
-            gte: input.startDate,
-            lte: input.endDate,
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-
-      const streakCompletions: StreakCompletionsObject = {};
-      const totalCompletionsByDate: CalendarValue[] = [];
-      let currentDate: null | string = null;
-      let currentNumCompletions = 0;
-
-      completions.forEach((completion) => {
-        const newDate = completion.createdAt.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
-
-        if (!streakCompletions[completion.streakId]) {
-          streakCompletions[completion.streakId] = [];
-        }
-
-        if (currentDate === newDate) {
-          currentNumCompletions++;
-        } else {
-          if (currentDate !== null) {
-            totalCompletionsByDate.push({
-              date: new Date(currentDate),
-              count: currentNumCompletions,
-            });
-          }
-          currentDate = newDate;
-          currentNumCompletions = 1; // Reset for the new date
-        }
-
-        // Add completion details directly to the streak array
-        streakCompletions[completion.streakId].push({
-          date: completion.createdAt,
-          count: 1, // Assuming each completion record counts as one completion
-        });
-      });
-
-      // Ensure the last date's data is added
-      if (completions.length > 0) {
-        totalCompletionsByDate.push({
-          date: new Date(currentDate),
-          count: currentNumCompletions,
-        });
-      }
-
-      console.log("Streak-specific completions:", streakCompletions);
-      console.log("Total completions by date:", totalCompletionsByDate);
-
-      return { streakCompletions, totalCompletionsByDate };
     }),
 });
