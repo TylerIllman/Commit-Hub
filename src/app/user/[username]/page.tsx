@@ -45,13 +45,13 @@ const Page = ({ params }: UserPageProps) => {
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999); // End of today
 
-  // const streakCompletionsRes = api.user.getStreakCompletions.useQuery(
-  //   {
-  //     startDate: dateStart,
-  //     endDate: todayEnd,
-  //   },
-  //   { enabled: !!userId },
-  // );
+  // if (!user.isFetched) {
+  //   return <div>Loading user data...</div>;
+  // }
+
+  // if (!userId) {
+  //   return <div>No user {username}</div>;
+  // }
 
   const userStreaks = api.user.getUserStreaks.useQuery(
     {
@@ -138,6 +138,7 @@ const Page = ({ params }: UserPageProps) => {
                     size="toggleIcon"
                     //TODO: Add ability to toggle active or inactive button using global state so doesnt require another DB call
                     variant={
+                      streak.completions.length > 0 &&
                       isSameDay(streak.completions[0].date, today)
                         ? "toggleIconActive"
                         : "toggleIconInactive"
@@ -154,17 +155,15 @@ const Page = ({ params }: UserPageProps) => {
           ) : userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
             userStreaks.data.streaks.map((streak, index) => {
               const today = new Date();
-              console.log("user doesn't own page: ", userOwnsPage);
               return (
                 <div
                   key={`streakbutton-${streak.id}`}
                   className={cn(
                     "flex h-24 w-24 items-center justify-center rounded-full border bg-card text-6xl",
                     {
-                      "bg-primary": isSameDay(
-                        streak.completions[0].date,
-                        today,
-                      ),
+                      "bg-primary":
+                        streak.completions.length > 0 &&
+                        isSameDay(streak.completions[0].date, today),
                     },
                   )}
                 >
@@ -211,14 +210,14 @@ const Page = ({ params }: UserPageProps) => {
 
       {userOwnsPage && (
         <div className="flex w-full items-center justify-center">
-          <button
+          <Button
             onClick={() => {
               onOpen("createStreak");
             }}
-            className="bg-primary-400 max-w-[400px] rounded-lg px-4 py-3 text-center"
+            // className="bg-primary-400 max-w-[400px] rounded-lg px-4 py-3 text-center"
           >
             Add New Streak
-          </button>
+          </Button>
         </div>
       )}
     </div>
