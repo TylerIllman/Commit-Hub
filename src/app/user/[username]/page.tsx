@@ -9,6 +9,8 @@ import { useModal } from "~/hooks/use-modal-store";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import type { streakWithCompletion } from "~/server/api/routers/user";
+import { useEffect, useState } from "react";
+import { StreakCompletion } from "@prisma/client";
 
 function isSameDay(d1: Date, d2: Date) {
   return (
@@ -30,11 +32,16 @@ const Page = ({ params }: UserPageProps) => {
   const { username } = params;
   const activeUser = useUser();
 
-  const user = api.user.getUser.useQuery({ userName: username });
-  const userId = user.data?.user?.id;
+  const userQuery = api.user.getUser.useQuery({ userName: username });
+  const userId = userQuery.data?.user?.id;
+  const [userStreaks, setUserStreaks] = useState<streakWithCompletion[] | null>(
+    null,
+  );
 
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
+
+  const userOwnsPage = activeUser.user?.id == userQuery.data?.user?.id;
 
   const dateStart = new Date();
   dateStart.setHours(0, 0, 0, 0); // Start of today
@@ -43,7 +50,7 @@ const Page = ({ params }: UserPageProps) => {
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999); // End of today
 
-  const userStreaks = api.user.getUserStreaks.useQuery(
+  const { data: streaksData, isSuccess } = api.user.getUserStreaks.useQuery(
     {
       //HACK: default val "" to remove linting error. This may cause problems. Shouldn't tho due enabled
       userId: userId ?? "",
@@ -53,23 +60,44 @@ const Page = ({ params }: UserPageProps) => {
     { enabled: !!userId },
   );
 
-  if (!user.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
+  useEffect(() => {
+    if (isSuccess && streaksData) {
+      //TODO: Fix incorrect call error (may need better typing in the tRPC route)
+      setUserStreaks(streaksData);
+    }
+  }, [streaksData, isSuccess]);
 
-  if (!user.data?.isUser || !user.data.user) {
+  if (!userQuery.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
+
+  if (!userQuery.data?.isUser || !userQuery.data.user) {
     return <div>No user</div>;
   }
 
-  const userOwnsPage = activeUser.user?.id == user.data?.user?.id;
-
-  //HACK: Hard coding streakWithCompletion[] type may cause errors
-  const streaksArray = (userStreaks.data?.streaks ??
-    []) as streakWithCompletion[];
-
-  const onStreakClick = (streakId: number) => {
+  const handleStreakCompletion = (streakId: number) => {
+    if (!userStreaks) {
+      console.log("no streak");
+      return;
+    }
     streakCompletionMutation.mutate({
       streakId,
     });
+    const updatedStreaks = userStreaks.map((streak) => {
+      if (streak.id === streakId) {
+        return { ...streak };
+      }
+      return streak;
+    });
+    setUserStreaks(updatedStreaks);
   };
+
+  //HACK: Hard coding streakWithCompletion[] type may cause errors
+  const streaksArray = (streaksData?.streaks ?? []) as streakWithCompletion[];
+
+  // const onStreakClick = (streakId: number) => {
+  //   streakCompletionMutation.mutate({
+  //     streakId,
+  //   });
+  // };
 
   return (
     <div className="flex w-full max-w-[1600px] flex-col">
@@ -77,7 +105,7 @@ const Page = ({ params }: UserPageProps) => {
         <div className="flex flex-col">
           <div className="flex flex-row items-center gap-4">
             <h1 className="whitespace-nowrap text-8xl font-bold">
-              {user.data.user.firstName} {user.data.user.lastName}
+              {userQuery.data.user.firstName} {userQuery.data.user.lastName}
             </h1>
           </div>
 
@@ -85,7 +113,7 @@ const Page = ({ params }: UserPageProps) => {
 
           <div className="flex flex-row items-end gap-4">
             <span className="flex-nowrap whitespace-nowrap text-xl text-blue-600">
-              @{user.data.user.userName}
+              @{userQuery.data.user.userName}
             </span>
             <span className="flex whitespace-nowrap text-xl text-muted-foreground">
               Joined: May 2024
@@ -118,7 +146,7 @@ const Page = ({ params }: UserPageProps) => {
       <div className="flex flex-row items-center gap-4">
         <div className="flex flex-row items-center gap-4">
           {userOwnsPage ? (
-            userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
+            isSuccess && streaksData.hasStreaks ? (
               streaksArray.map((streak) => {
                 const today = new Date();
                 return (
@@ -133,7 +161,7 @@ const Page = ({ params }: UserPageProps) => {
                         ? "toggleIconActive"
                         : "toggleIconInactive"
                     }
-                    onClick={() => onStreakClick(streak.id)}
+                    onClick={() => handleStreakCompletion(streak.id)}
                   >
                     {streak.emoji}
                   </Button>
@@ -142,7 +170,7 @@ const Page = ({ params }: UserPageProps) => {
             ) : (
               <div>No streaks found</div>
             )
-          ) : userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
+          ) : isSuccess && streaksData.hasStreaks ? (
             streaksArray.map((streak) => {
               const today = new Date();
               return (
@@ -169,12 +197,12 @@ const Page = ({ params }: UserPageProps) => {
       </div>
       <div className="p-4"></div>
 
-      {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
+      {isSuccess && streaksData.hasStreaks ? (
         //TODO: Add link and description rendering
         <Card>
           <div className="p-6">
             {/* HACK: Add default [] to fix linting error. May cause problems */}
-            <CommitCalendar values={userStreaks.data.masterStreak ?? []} />
+            <CommitCalendar values={streaksData.masterStreak ?? []} />
           </div>
         </Card>
       ) : (
@@ -182,7 +210,7 @@ const Page = ({ params }: UserPageProps) => {
       )}
 
       <div className="p-4"></div>
-      {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
+      {isSuccess && streaksData.hasStreaks ? (
         streaksArray.map((streak) => (
           <div key={`commitCal-${streak.id}`}>
             <Card>

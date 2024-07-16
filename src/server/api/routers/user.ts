@@ -59,7 +59,11 @@ export const userRouter = createTRPCRouter({
       });
 
       if (!streaks) {
-        return { hasStreaks: false };
+        return {
+          hasStreaks: false,
+          streaks: [],
+          masterStreak: [],
+        };
       }
 
       const completions = await db.streakCompletion.findMany({
