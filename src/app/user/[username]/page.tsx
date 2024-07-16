@@ -1,9 +1,6 @@
 "use client";
 
 import { useUser } from "@clerk/clerk-react";
-import { StreakCompletion } from "@prisma/client";
-import { Type } from "lucide-react";
-import { useEffect, useState } from "react";
 
 import CommitCalendar from "~/components/CommitCalendar";
 import { Button } from "~/components/ui/button";
@@ -11,6 +8,7 @@ import { Card } from "~/components/ui/card";
 import { useModal } from "~/hooks/use-modal-store";
 import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
+import type { streakWithCompletion } from "~/server/api/routers/user";
 
 function isSameDay(d1: Date, d2: Date) {
   return (
@@ -45,26 +43,15 @@ const Page = ({ params }: UserPageProps) => {
   const todayEnd = new Date();
   todayEnd.setHours(23, 59, 59, 999); // End of today
 
-  // if (!user.isFetched) {
-  //   return <div>Loading user data...</div>;
-  // }
-
-  // if (!userId) {
-  //   return <div>No user {username}</div>;
-  // }
-
   const userStreaks = api.user.getUserStreaks.useQuery(
     {
-      userId: userId,
+      //HACK: default val "" to remove linting error. This may cause problems. Shouldn't tho due enabled
+      userId: userId ?? "",
       startDate: dateStart,
       endDate: todayEnd,
     },
     { enabled: !!userId },
   );
-
-  // if (userStreaks?.data?.hasStreaks) {
-  //   console.log("streaks: ", userStreaks.data.streaks);
-  // }
 
   if (!user.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
 
@@ -74,7 +61,10 @@ const Page = ({ params }: UserPageProps) => {
 
   const userOwnsPage = activeUser.user?.id == user.data?.user?.id;
 
-  // NOTE: could error exist where date of PC running server is different to client?
+  //HACK: Hard coding streakWithCompletion[] type may cause errors
+  const streaksArray = (userStreaks.data?.streaks ??
+    []) as streakWithCompletion[];
+
   const onStreakClick = (streakId: number) => {
     streakCompletionMutation.mutate({
       streakId,
@@ -127,10 +117,9 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="flex flex-row items-center gap-4">
         <div className="flex flex-row items-center gap-4">
-          {/* TODO: Add a type var to streak */}
           {userOwnsPage ? (
             userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
-              userStreaks.data.streaks.map((streak, index) => {
+              streaksArray.map((streak) => {
                 const today = new Date();
                 return (
                   <Button
@@ -138,7 +127,8 @@ const Page = ({ params }: UserPageProps) => {
                     size="toggleIcon"
                     //TODO: Add ability to toggle active or inactive button using global state so doesnt require another DB call
                     variant={
-                      streak.completions.length > 0 &&
+                      // streak.completions.length > 0 &&
+                      streak.completions[0]?.date &&
                       isSameDay(streak.completions[0].date, today)
                         ? "toggleIconActive"
                         : "toggleIconInactive"
@@ -153,7 +143,7 @@ const Page = ({ params }: UserPageProps) => {
               <div>No streaks found</div>
             )
           ) : userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
-            userStreaks.data.streaks.map((streak, index) => {
+            streaksArray.map((streak) => {
               const today = new Date();
               return (
                 <div
@@ -162,7 +152,8 @@ const Page = ({ params }: UserPageProps) => {
                     "flex h-24 w-24 items-center justify-center rounded-full border bg-card text-6xl",
                     {
                       "bg-primary":
-                        streak.completions.length > 0 &&
+                        // streak.completions.length > 0 &&
+                        streak.completions[0]?.date &&
                         isSameDay(streak.completions[0].date, today),
                     },
                   )}
@@ -182,7 +173,8 @@ const Page = ({ params }: UserPageProps) => {
         //TODO: Add link and description rendering
         <Card>
           <div className="p-6">
-            <CommitCalendar values={userStreaks.data.masterStreak} />
+            {/* HACK: Add default [] to fix linting error. May cause problems */}
+            <CommitCalendar values={userStreaks.data.masterStreak ?? []} />
           </div>
         </Card>
       ) : (
@@ -191,7 +183,7 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="p-4"></div>
       {userStreaks.isSuccess && userStreaks.data.hasStreaks ? (
-        userStreaks.data.streaks.map((streak, index) => (
+        streaksArray.map((streak) => (
           <div key={`commitCal-${streak.id}`}>
             <Card>
               <div className="p-6">

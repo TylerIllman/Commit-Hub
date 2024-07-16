@@ -1,7 +1,6 @@
-import { Prisma } from "@prisma/client";
-import { Record } from "@prisma/client/runtime/library";
+import type { Record } from "@prisma/client/runtime/library";
 import { z } from "zod";
-import { Streak } from "@prisma/client";
+import type { Streak } from "@prisma/client";
 
 import {
   createTRPCRouter,
@@ -22,7 +21,14 @@ type CalendarValue = {
 };
 type StreakCompletionsObject = Record<number, CalendarValue[]>;
 
-type streakWithCompletion = Streak & {
+type UserStreaksResponseObj = {
+  hasStreaks: boolean;
+  streaks: CalendarValue[];
+  masterStreak: StreakCompletionsObject;
+};
+
+//HACK: May need to move this to "TYPES" folder in the future
+export type streakWithCompletion = Streak & {
   completions: CalendarValue[];
 };
 
