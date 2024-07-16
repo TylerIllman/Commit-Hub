@@ -40,7 +40,7 @@ const Page = ({ params }: UserPageProps) => {
   const [masterStreak, setMasterStreak] = useState<CalendarValue[]>([]);
   const [hasStreaks, setHasStreaks] = useState<boolean>(false);
   const [currStreak, setCurrStreak] = useState<number>(0);
-  const [streaksCompletedToday, setStreakScompletdToday] = useState<number>(0);
+  const [completedTodayCount, setCompletedTodayCount] = useState(0); // State to store the count
 
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
@@ -66,10 +66,21 @@ const Page = ({ params }: UserPageProps) => {
 
   useEffect(() => {
     if (isSuccess && streaksData) {
+      let countCompleted = 0;
+      const today = new Date();
+      streaksData.streaks.forEach((streak: streakWithCompletion) => {
+        if (
+          streak.completions[0] &&
+          isSameDay(streak.completions[0].date, today)
+        )
+          countCompleted += 1;
+      });
+
       //TODO: Fix incorrect call error (may need better typing in the tRPC route)
       setUserStreaks(streaksData.streaks);
       setMasterStreak(streaksData.masterStreak);
       setHasStreaks(streaksData.hasStreaks);
+      setCompletedTodayCount(countCompleted);
     }
   }, [streaksData, isSuccess]);
 
@@ -79,11 +90,15 @@ const Page = ({ params }: UserPageProps) => {
     return <div>No user</div>;
   }
 
-  const handleStreakCompletion = (streakId: number) => {
+  const handleStreakCompletion = (
+    streakId: number,
+    completions: CalendarValue[],
+  ) => {
     if (!userStreaks) {
       console.log("no streak");
       return;
     }
+
     streakCompletionMutation.mutate({
       streakId,
     });
@@ -95,15 +110,6 @@ const Page = ({ params }: UserPageProps) => {
     });
     setUserStreaks(updatedStreaks);
   };
-
-  //HACK: Hard coding streakWithCompletion[] type may cause errors
-  // const streaksArray = userStreaks ?? [];
-
-  // const onStreakClick = (streakId: number) => {
-  //   streakCompletionMutation.mutate({
-  //     streakId,
-  //   });
-  // };
 
   return (
     <div className="flex w-full max-w-[1600px] flex-col">
@@ -143,7 +149,7 @@ const Page = ({ params }: UserPageProps) => {
             <span className="text-text-400 text-xl">Completed Today</span>
 
             <span className="flex text-6xl font-bold">
-              ✅ {streaksCompletedToday}
+              ✅ {completedTodayCount}
             </span>
           </div>
         </div>
@@ -153,45 +159,32 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="flex flex-row items-center gap-4">
         <div className="flex flex-row items-center gap-4">
-          {userOwnsPage ? (
-            isSuccess && hasStreaks ? (
-              userStreaks.map((streak) => {
-                const today = new Date();
-                return (
-                  <Button
-                    key={`streakbutton-${streak.id}`}
-                    size="toggleIcon"
-                    //TODO: Add ability to toggle active or inactive button using global state so doesnt require another DB call
-                    variant={
-                      // streak.completions.length > 0 &&
-                      streak.completions[0]?.date &&
-                      isSameDay(streak.completions[0].date, today)
-                        ? "toggleIconActive"
-                        : "toggleIconInactive"
-                    }
-                    onClick={() => handleStreakCompletion(streak.id)}
-                  >
-                    {streak.emoji}
-                  </Button>
-                );
-              })
-            ) : (
-              <div>No streaks found</div>
-            )
-          ) : isSuccess && hasStreaks ? (
+          {isSuccess && hasStreaks ? (
             userStreaks.map((streak) => {
               const today = new Date();
-              return (
-                <div
+              const completedToday =
+                streak.completions[0]?.date &&
+                isSameDay(streak.completions[0].date, today);
+
+              return userOwnsPage ? (
+                <Button
                   key={`streakbutton-${streak.id}`}
+                  size="toggleIcon"
+                  variant={
+                    completedToday ? "toggleIconActive" : "toggleIconInactive"
+                  }
+                  onClick={() =>
+                    handleStreakCompletion(streak.id, streak.completions)
+                  }
+                >
+                  {streak.emoji}
+                </Button>
+              ) : (
+                <div
+                  key={`streakview-${streak.id}`}
                   className={cn(
                     "flex h-24 w-24 items-center justify-center rounded-full border bg-card text-6xl",
-                    {
-                      "bg-primary":
-                        // streak.completions.length > 0 &&
-                        streak.completions[0]?.date &&
-                        isSameDay(streak.completions[0].date, today),
-                    },
+                    { "bg-primary": completedToday },
                   )}
                 >
                   {streak.emoji}
@@ -199,10 +192,11 @@ const Page = ({ params }: UserPageProps) => {
               );
             })
           ) : (
-            <div>Loading Streaks</div>
+            <div>No streaks found</div>
           )}
         </div>
       </div>
+
       <div className="p-4"></div>
 
       {isSuccess && hasStreaks ? (

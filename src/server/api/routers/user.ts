@@ -25,6 +25,7 @@ type UserStreaksResponseObj = {
   hasStreaks: boolean;
   streaks: CalendarValue[];
   masterStreak: StreakCompletionsObject;
+  longestStreak: number;
 };
 
 //HACK: May need to move this to "TYPES" folder in the future
@@ -63,6 +64,7 @@ export const userRouter = createTRPCRouter({
           hasStreaks: false,
           streaks: [],
           masterStreak: [],
+          longestStreak: 0,
         };
       }
 
@@ -85,6 +87,8 @@ export const userRouter = createTRPCRouter({
       const totalCompletionsByDate: CalendarValue[] = [];
       let currentDate: null | string = null;
       let currentNumCompletions = 0;
+      let longestStreak = 0;
+      let currStreak = 1;
 
       completions.forEach((completion) => {
         const newDate = completion.createdAt.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
@@ -92,6 +96,10 @@ export const userRouter = createTRPCRouter({
         if (!streakCompletions[completion.streakId]) {
           streakCompletions[completion.streakId] = [];
         }
+
+        // if currDate > startDate for each streak
+        // if count oncurrDay === num streaks b4 that day currStreak++
+        // if gap in days currStreak = 0
 
         if (currentDate === newDate) {
           currentNumCompletions++;
@@ -138,6 +146,7 @@ export const userRouter = createTRPCRouter({
         hasStreaks: true,
         streaks: streaksWithCompletion,
         masterStreak: totalCompletionsByDate,
+        longestStreak: longestStreak,
       };
     }),
 });
