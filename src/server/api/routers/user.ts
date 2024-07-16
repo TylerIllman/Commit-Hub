@@ -15,7 +15,7 @@ const streakCompletionSchema = z.object({
   endDate: z.date(),
 });
 
-type CalendarValue = {
+export type CalendarValue = {
   date: Date;
   count: number;
 };

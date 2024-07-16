@@ -11,6 +11,7 @@ import { api } from "~/trpc/react";
 import type { streakWithCompletion } from "~/server/api/routers/user";
 import { useEffect, useState } from "react";
 import { StreakCompletion } from "@prisma/client";
+import type { CalendarValue } from "~/server/api/routers/user";
 
 function isSameDay(d1: Date, d2: Date) {
   return (
@@ -34,9 +35,12 @@ const Page = ({ params }: UserPageProps) => {
 
   const userQuery = api.user.getUser.useQuery({ userName: username });
   const userId = userQuery.data?.user?.id;
-  const [userStreaks, setUserStreaks] = useState<streakWithCompletion[] | null>(
-    null,
-  );
+
+  const [userStreaks, setUserStreaks] = useState<streakWithCompletion[]>([]);
+  const [masterStreak, setMasterStreak] = useState<CalendarValue[]>([]);
+  const [hasStreaks, setHasStreaks] = useState<boolean>(false);
+  const [currStreak, setCurrStreak] = useState<number>(0);
+  const [streaksCompletedToday, setStreakScompletdToday] = useState<number>(0);
 
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
@@ -63,7 +67,9 @@ const Page = ({ params }: UserPageProps) => {
   useEffect(() => {
     if (isSuccess && streaksData) {
       //TODO: Fix incorrect call error (may need better typing in the tRPC route)
-      setUserStreaks(streaksData);
+      setUserStreaks(streaksData.streaks);
+      setMasterStreak(streaksData.masterStreak);
+      setHasStreaks(streaksData.hasStreaks);
     }
   }, [streaksData, isSuccess]);
 
@@ -91,7 +97,7 @@ const Page = ({ params }: UserPageProps) => {
   };
 
   //HACK: Hard coding streakWithCompletion[] type may cause errors
-  const streaksArray = (streaksData?.streaks ?? []) as streakWithCompletion[];
+  // const streaksArray = userStreaks ?? [];
 
   // const onStreakClick = (streakId: number) => {
   //   streakCompletionMutation.mutate({
@@ -129,14 +135,16 @@ const Page = ({ params }: UserPageProps) => {
         <div className="flex w-full justify-end">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center">
             <span className="text-text-400 text-xl">Current Streak</span>
-            <span className="flex text-6xl font-bold">🔥42</span>
+            <span className="flex text-6xl font-bold">🔥 {currStreak}</span>
           </div>
         </div>
         <div className=" flex w-full justify-center">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg  p-6 text-center">
             <span className="text-text-400 text-xl">Completed Today</span>
 
-            <span className="flex text-6xl font-bold">✅ 4</span>
+            <span className="flex text-6xl font-bold">
+              ✅ {streaksCompletedToday}
+            </span>
           </div>
         </div>
       </div>
@@ -146,8 +154,8 @@ const Page = ({ params }: UserPageProps) => {
       <div className="flex flex-row items-center gap-4">
         <div className="flex flex-row items-center gap-4">
           {userOwnsPage ? (
-            isSuccess && streaksData.hasStreaks ? (
-              streaksArray.map((streak) => {
+            isSuccess && hasStreaks ? (
+              userStreaks.map((streak) => {
                 const today = new Date();
                 return (
                   <Button
@@ -170,8 +178,8 @@ const Page = ({ params }: UserPageProps) => {
             ) : (
               <div>No streaks found</div>
             )
-          ) : isSuccess && streaksData.hasStreaks ? (
-            streaksArray.map((streak) => {
+          ) : isSuccess && hasStreaks ? (
+            userStreaks.map((streak) => {
               const today = new Date();
               return (
                 <div
@@ -197,12 +205,12 @@ const Page = ({ params }: UserPageProps) => {
       </div>
       <div className="p-4"></div>
 
-      {isSuccess && streaksData.hasStreaks ? (
+      {isSuccess && hasStreaks ? (
         //TODO: Add link and description rendering
         <Card>
           <div className="p-6">
             {/* HACK: Add default [] to fix linting error. May cause problems */}
-            <CommitCalendar values={streaksData.masterStreak ?? []} />
+            <CommitCalendar values={masterStreak ?? []} />
           </div>
         </Card>
       ) : (
@@ -210,8 +218,8 @@ const Page = ({ params }: UserPageProps) => {
       )}
 
       <div className="p-4"></div>
-      {isSuccess && streaksData.hasStreaks ? (
-        streaksArray.map((streak) => (
+      {isSuccess && hasStreaks ? (
+        userStreaks.map((streak) => (
           <div key={`commitCal-${streak.id}`}>
             <Card>
               <div className="p-6">
