@@ -30,6 +30,7 @@ type UserStreaksResponseObj = {
   masterStreak: StreakCompletionsObject;
   longestStreak: number;
   streakContainingToday: number;
+  totalNumCompletions: number;
 };
 
 //HACK: May need to move this to "TYPES" folder in the future
@@ -102,16 +103,12 @@ export const userRouter = createTRPCRouter({
         (isSameDay(completions[0]?.createdAt, todayDate) ||
           isNextDay(completions[0]?.createdAt, todayDate)); //WARNING: May need to swap these
 
-      console.log("initStreakContainsToday: ", initStreakContainsToday);
-
       completions.forEach((completion, index) => {
         const newDate = new Date(completion.createdAt);
 
         if (!streakCompletions[completion.streakId]) {
           streakCompletions[completion.streakId] = [];
         }
-
-        // increment streak as soon as target == curr???
 
         if (currentDate && isSameDay(currentDate, newDate)) {
           currentNumCompletions++;
@@ -186,6 +183,7 @@ export const userRouter = createTRPCRouter({
         longestStreak: longestStreak > 0 ? longestStreak + 1 : 0,
         currentActiveStreak:
           streakContainingToday > 0 ? streakContainingToday + 1 : 0,
+        totalNumCompletions: completions.length,
       };
     }),
 });

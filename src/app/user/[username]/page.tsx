@@ -14,6 +14,7 @@ import { StreakCompletion } from "@prisma/client";
 import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
 import { ValueOf } from "next/dist/shared/lib/constants";
+import { count } from "console";
 
 interface UserPageProps {
   params: {
@@ -41,6 +42,8 @@ const Page = ({ params }: UserPageProps) => {
   const [currentActiveStreak, setCurrentActiveStreak] = useState(0);
   const [streaksCompletedToday, setStreaksCompletedToday] =
     useState<StreaksCompletedTodayType>({});
+  const [streakCompletionLoading, setStreakCompletionLoading] = useState(false);
+  const [totalNumCompletions, setTotalNumCompletions] = useState(0);
 
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
@@ -72,10 +75,12 @@ const Page = ({ params }: UserPageProps) => {
       setHasStreaks(streaksData.hasStreaks);
       setLongestStreak(streaksData.longestStreak);
       setCurrentActiveStreak(streaksData.currentActiveStreak);
+      setTotalNumCompletions(streaksData.totalNumCompletions);
 
       const today = new Date();
       const tempStreaksCompletedToday: StreaksCompletedTodayType = {};
       let countCompleted = 0;
+
       streaksData.streaks.forEach((streak: streakWithCompletion) => {
         if (
           streak.completions[0] &&
@@ -107,22 +112,95 @@ const Page = ({ params }: UserPageProps) => {
       console.log("no streak");
       return;
     }
+    //TODO: Convert this to have an indvividual is loading state per button
+    setStreakCompletionLoading(true);
 
-    //TODO: Add a disabled to these buttons so can't spam them
     const tempStreaksCompletedToday = streaksCompletedToday;
+
+    if (tempStreaksCompletedToday[streakId]) {
+      setCompletedTodayCount(completedTodayCount - 1);
+      setTotalNumCompletions(totalNumCompletions - 1);
+
+      const tempUserStreaks = userStreaks.map((streak) => {
+        if (streak.id == streakId) {
+          return {
+            ...streak,
+            completions: streak.completions.slice(1),
+          };
+        }
+
+        return streak;
+      });
+
+      const tempMasterStreak = masterStreak;
+      if (
+        tempMasterStreak[0] &&
+        isSameDay(tempMasterStreak[0].date, todayEnd)
+      ) {
+        tempMasterStreak[0].count -= 1;
+      }
+
+      setMasterStreak(tempMasterStreak);
+      setUserStreaks(tempUserStreaks);
+    } else {
+      setCompletedTodayCount(completedTodayCount + 1);
+      setTotalNumCompletions(totalNumCompletions + 1);
+
+      const tempUserStreaks = userStreaks.map((streak) => {
+        if (streak.id == streakId) {
+          return {
+            ...streak,
+            completions: [
+              { date: new Date(), count: 1 },
+              ...streak.completions,
+            ],
+          };
+        }
+
+        return streak;
+      });
+
+      let tempMasterStreak = masterStreak;
+      if (
+        tempMasterStreak[0] &&
+        isSameDay(tempMasterStreak[0].date, todayEnd)
+      ) {
+        tempMasterStreak[0].count += 1;
+      } else {
+        tempMasterStreak = [
+          { date: new Date(), count: 1 },
+          ...tempMasterStreak,
+        ];
+      }
+
+      setMasterStreak(tempMasterStreak);
+      setUserStreaks(tempUserStreaks);
+    }
+
     tempStreaksCompletedToday[streakId] = !tempStreaksCompletedToday[streakId];
     setStreaksCompletedToday(tempStreaksCompletedToday);
 
-    streakCompletionMutation.mutate({
-      streakId,
-    });
-    const updatedStreaks = userStreaks.map((streak) => {
-      if (streak.id === streakId) {
-        return { ...streak };
-      }
-      return streak;
-    });
-    setUserStreaks(updatedStreaks);
+    streakCompletionMutation.mutate(
+      {
+        streakId,
+      },
+      {
+        onSuccess: () => {
+          setStreakCompletionLoading(false);
+        },
+        onError: () => {
+          setStreakCompletionLoading(false);
+          console.log("error updating streak");
+        },
+      },
+    );
+
+    // const updatedStreaks = userStreaks.map((streak) => {
+    //   if (streak.id === streakId) {
+    //     return { ...streak };
+    //   }
+    //   return streak;
+    // });
   };
 
   return (
@@ -154,9 +232,11 @@ const Page = ({ params }: UserPageProps) => {
 
         <div className="flex w-full justify-end">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center">
-            <span className="text-text-400 text-xl">Current Streak</span>
+            <span className="text-text-400 text-xl">
+              Total Streak Completions
+            </span>
             <span className="flex text-6xl font-bold">
-              🔥 {currentActiveStreak}
+              🔥 {totalNumCompletions}
             </span>
           </div>
         </div>
@@ -179,8 +259,6 @@ const Page = ({ params }: UserPageProps) => {
             userStreaks.map((streak) => {
               const today = new Date();
               const completedToday = streaksCompletedToday[streak.id];
-              // streak.completions[0]?.date &&
-              // isSameDay(streak.completions[0].date, today);
 
               return userOwnsPage ? (
                 <Button
@@ -192,6 +270,7 @@ const Page = ({ params }: UserPageProps) => {
                   onClick={() =>
                     handleStreakCompletion(streak.id, streak.completions)
                   }
+                  disabled={streakCompletionLoading}
                 >
                   {streak.emoji}
                 </Button>
