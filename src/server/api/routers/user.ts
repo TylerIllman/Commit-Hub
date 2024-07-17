@@ -104,12 +104,6 @@ export const userRouter = createTRPCRouter({
 
       console.log("initStreakContainsToday: ", initStreakContainsToday);
 
-      // const streakStartDates = new Map();
-      //
-      // streaks.forEach((streak) => {
-      //   streakStartDates.set(streak.id, streak.startDate);
-      // });
-
       completions.forEach((completion, index) => {
         const newDate = new Date(completion.createdAt);
 
@@ -117,9 +111,7 @@ export const userRouter = createTRPCRouter({
           streakCompletions[completion.streakId] = [];
         }
 
-        // if currDate > startDate for each streak
-        // if count oncurrDay === num streaks b4 that day currStreak++
-        // if gap in days currStreak = 0
+        // increment streak as soon as target == curr???
 
         if (currentDate && isSameDay(currentDate, newDate)) {
           currentNumCompletions++;
@@ -154,25 +146,6 @@ export const userRouter = createTRPCRouter({
             }
           }
 
-          // console.log(
-          //   "currDate: ",
-          //   currentDate,
-          //   " New Date: ",
-          //   newDate,
-          //   "targe: ",
-          //   targetStreaks,
-          //   " num Completions: ",
-          //   currentNumCompletions,
-          //   " currStreak: ",
-          //   currStreak,
-          //   " longest streak: ",
-          //   longestStreak,
-          //   " streakContainingToday: ",
-          //   streakContainingToday,
-          //   " initStreakContainsToday: ",
-          //   initStreakContainsToday,
-          // );
-
           currentDate = newDate;
           currentNumCompletions = 1; // Reset for the new date
         }
@@ -182,25 +155,6 @@ export const userRouter = createTRPCRouter({
           date: completion.createdAt,
           count: 1, // Assuming each completion record counts as one completion
         });
-
-        console.log(
-          "currDate: ",
-          currentDate,
-          " New Date: ",
-          newDate,
-          // "targe: ",
-          // targetStreaks,
-          " num Completions: ",
-          currentNumCompletions,
-          " currStreak: ",
-          currStreak,
-          " longest streak: ",
-          longestStreak,
-          " streakContainingToday: ",
-          streakContainingToday,
-          " initStreakContainsToday: ",
-          initStreakContainsToday,
-        );
       });
 
       if (currStreak > 0) {
@@ -216,10 +170,6 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      // console.log("Streak-specific completions:", streakCompletions);
-      // console.log("Total completions by date:", totalCompletionsByDate);
-      // console.log("streaks: ", streaks);
-
       const streaksWithCompletion: streakWithCompletion = streaks.map(
         (streak) => ({
           ...streak,
@@ -227,14 +177,15 @@ export const userRouter = createTRPCRouter({
         }),
       );
 
-      // console.log("streaksWithCompletion:", streaksWithCompletion);
-
+      //HACK: THIS MUST BE CHANGED as longest streaks and currentActiveStreak are not calculating correctly
+      //They have have an off by 1 error due to not correctly including the initial day of streaks
       return {
         hasStreaks: true,
         streaks: streaksWithCompletion,
         masterStreak: totalCompletionsByDate,
-        longestStreak: longestStreak,
-        currentActiveStreak: streakContainingToday,
+        longestStreak: longestStreak > 0 ? longestStreak + 1 : 0,
+        currentActiveStreak:
+          streakContainingToday > 0 ? streakContainingToday + 1 : 0,
       };
     }),
 });

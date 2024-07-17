@@ -13,12 +13,15 @@ import { useEffect, useState } from "react";
 import { StreakCompletion } from "@prisma/client";
 import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 interface UserPageProps {
   params: {
     username: string;
   };
 }
+
+type StreaksCompletedTodayType = Record<number, boolean>;
 
 const Page = ({ params }: UserPageProps) => {
   // TODO: Need to add an auth callback for when user doesnt exist, or is missing details
@@ -36,6 +39,8 @@ const Page = ({ params }: UserPageProps) => {
   const [completedTodayCount, setCompletedTodayCount] = useState(0); // State to store the count
   const [longestSteak, setLongestStreak] = useState(0);
   const [currentActiveStreak, setCurrentActiveStreak] = useState(0);
+  const [streaksCompletedToday, setStreaksCompletedToday] =
+    useState<StreaksCompletedTodayType>({});
 
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
@@ -61,23 +66,30 @@ const Page = ({ params }: UserPageProps) => {
 
   useEffect(() => {
     if (isSuccess && streaksData) {
-      let countCompleted = 0;
-      const today = new Date();
-      streaksData.streaks.forEach((streak: streakWithCompletion) => {
-        if (
-          streak.completions[0] &&
-          isSameDay(streak.completions[0].date, today)
-        )
-          countCompleted += 1;
-      });
-
       //TODO: Fix incorrect call error (may need better typing in the tRPC route)
       setUserStreaks(streaksData.streaks);
       setMasterStreak(streaksData.masterStreak);
       setHasStreaks(streaksData.hasStreaks);
-      setCompletedTodayCount(countCompleted);
       setLongestStreak(streaksData.longestStreak);
       setCurrentActiveStreak(streaksData.currentActiveStreak);
+
+      const today = new Date();
+      const tempStreaksCompletedToday: StreaksCompletedTodayType = {};
+      let countCompleted = 0;
+      streaksData.streaks.forEach((streak: streakWithCompletion) => {
+        if (
+          streak.completions[0] &&
+          isSameDay(streak.completions[0].date, today)
+        ) {
+          tempStreaksCompletedToday[streak.id] = true;
+          countCompleted++;
+        } else {
+          tempStreaksCompletedToday[streak.id] = false;
+        }
+      });
+
+      setCompletedTodayCount(countCompleted);
+      setStreaksCompletedToday(tempStreaksCompletedToday);
     }
   }, [streaksData, isSuccess]);
 
@@ -95,6 +107,11 @@ const Page = ({ params }: UserPageProps) => {
       console.log("no streak");
       return;
     }
+
+    //TODO: Add a disabled to these buttons so can't spam them
+    const tempStreaksCompletedToday = streaksCompletedToday;
+    tempStreaksCompletedToday[streakId] = !tempStreaksCompletedToday[streakId];
+    setStreaksCompletedToday(tempStreaksCompletedToday);
 
     streakCompletionMutation.mutate({
       streakId,
@@ -161,9 +178,9 @@ const Page = ({ params }: UserPageProps) => {
           {isSuccess && hasStreaks ? (
             userStreaks.map((streak) => {
               const today = new Date();
-              const completedToday =
-                streak.completions[0]?.date &&
-                isSameDay(streak.completions[0].date, today);
+              const completedToday = streaksCompletedToday[streak.id];
+              // streak.completions[0]?.date &&
+              // isSameDay(streak.completions[0].date, today);
 
               return userOwnsPage ? (
                 <Button
