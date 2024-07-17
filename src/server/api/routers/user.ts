@@ -10,6 +10,7 @@ import {
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
 import { loadEnvFile } from "process";
+import { Console } from "console";
 
 const streakCompletionSchema = z.object({
   userId: z.string(),
@@ -28,6 +29,7 @@ type UserStreaksResponseObj = {
   streaks: CalendarValue[];
   masterStreak: StreakCompletionsObject;
   longestStreak: number;
+  streakContainingToday: number;
 };
 
 //HACK: May need to move this to "TYPES" folder in the future
@@ -67,6 +69,7 @@ export const userRouter = createTRPCRouter({
           streaks: [],
           masterStreak: [],
           longestStreak: 0,
+          currentActiveStreak: 0,
         };
       }
 
@@ -91,15 +94,23 @@ export const userRouter = createTRPCRouter({
       let currentNumCompletions = 0;
       let longestStreak = 0;
       let currStreak = 0;
-      const streakStartDates = new Map();
+      let streakContainingToday = 0;
+      const todayDate = new Date();
 
-      streaks.forEach((streak) => {
-        streakStartDates.set(streak.id, streak.startDate);
-      });
+      let initStreakContainsToday =
+        completions[0] &&
+        (isSameDay(completions[0]?.createdAt, todayDate) ||
+          isNextDay(completions[0]?.createdAt, todayDate)); //WARNING: May need to swap these
 
-      console.log(streakStartDates);
+      console.log("initStreakContainsToday: ", initStreakContainsToday);
 
-      completions.forEach((completion) => {
+      // const streakStartDates = new Map();
+      //
+      // streaks.forEach((streak) => {
+      //   streakStartDates.set(streak.id, streak.startDate);
+      // });
+
+      completions.forEach((completion, index) => {
         const newDate = new Date(completion.createdAt);
 
         if (!streakCompletions[completion.streakId]) {
@@ -120,22 +131,12 @@ export const userRouter = createTRPCRouter({
             });
           }
           const targetStreaks = streaks.reduce((acc, streak) => {
-            if (currentDate && currentDate > streak.startDate) {
+            if (currentDate && currentDate >= streak.startDate) {
               acc += 1;
             }
             return acc;
           }, 0);
 
-          if (currentDate) {
-            console.log(
-              "currdate: ",
-              currentDate,
-              " newdate: ",
-              newDate,
-              " isnextday: ",
-              isNextDay(newDate, currentDate),
-            );
-          }
           if (
             currentDate &&
             targetStreaks != 0 &&
@@ -146,20 +147,31 @@ export const userRouter = createTRPCRouter({
           } else {
             longestStreak = Math.max(currStreak, longestStreak);
             currStreak = 0;
+
+            if (currentDate && initStreakContainsToday) {
+              streakContainingToday = longestStreak;
+              initStreakContainsToday = false;
+            }
           }
 
-          console.log(
-            "currDate: ",
-            currentDate,
-            "targe: ",
-            targetStreaks,
-            " num Completions: ",
-            currentNumCompletions,
-            " currStreak: ",
-            currStreak,
-            " longest streak: ",
-            longestStreak,
-          );
+          // console.log(
+          //   "currDate: ",
+          //   currentDate,
+          //   " New Date: ",
+          //   newDate,
+          //   "targe: ",
+          //   targetStreaks,
+          //   " num Completions: ",
+          //   currentNumCompletions,
+          //   " currStreak: ",
+          //   currStreak,
+          //   " longest streak: ",
+          //   longestStreak,
+          //   " streakContainingToday: ",
+          //   streakContainingToday,
+          //   " initStreakContainsToday: ",
+          //   initStreakContainsToday,
+          // );
 
           currentDate = newDate;
           currentNumCompletions = 1; // Reset for the new date
@@ -170,7 +182,30 @@ export const userRouter = createTRPCRouter({
           date: completion.createdAt,
           count: 1, // Assuming each completion record counts as one completion
         });
+
+        console.log(
+          "currDate: ",
+          currentDate,
+          " New Date: ",
+          newDate,
+          // "targe: ",
+          // targetStreaks,
+          " num Completions: ",
+          currentNumCompletions,
+          " currStreak: ",
+          currStreak,
+          " longest streak: ",
+          longestStreak,
+          " streakContainingToday: ",
+          streakContainingToday,
+          " initStreakContainsToday: ",
+          initStreakContainsToday,
+        );
       });
+
+      if (currStreak > 0) {
+        longestStreak = Math.max(currStreak, longestStreak);
+      }
 
       // Ensure the last date's data is added
       if (completions.length > 0) {
@@ -192,13 +227,14 @@ export const userRouter = createTRPCRouter({
         }),
       );
 
-      console.log("streaksWithCompletion:", streaksWithCompletion);
+      // console.log("streaksWithCompletion:", streaksWithCompletion);
 
       return {
         hasStreaks: true,
         streaks: streaksWithCompletion,
         masterStreak: totalCompletionsByDate,
         longestStreak: longestStreak,
+        currentActiveStreak: streakContainingToday,
       };
     }),
 });

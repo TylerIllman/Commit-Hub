@@ -35,6 +35,7 @@ const Page = ({ params }: UserPageProps) => {
   const [currStreak, setCurrStreak] = useState<number>(0);
   const [completedTodayCount, setCompletedTodayCount] = useState(0); // State to store the count
   const [longestSteak, setLongestStreak] = useState(0);
+  const [currentActiveStreak, setCurrentActiveStreak] = useState(0);
 
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
@@ -76,6 +77,7 @@ const Page = ({ params }: UserPageProps) => {
       setHasStreaks(streaksData.hasStreaks);
       setCompletedTodayCount(countCompleted);
       setLongestStreak(streaksData.longestStreak);
+      setCurrentActiveStreak(streaksData.currentActiveStreak);
     }
   }, [streaksData, isSuccess]);
 
@@ -136,7 +138,9 @@ const Page = ({ params }: UserPageProps) => {
         <div className="flex w-full justify-end">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center">
             <span className="text-text-400 text-xl">Current Streak</span>
-            <span className="flex text-6xl font-bold">🔥 {currStreak}</span>
+            <span className="flex text-6xl font-bold">
+              🔥 {currentActiveStreak}
+            </span>
           </div>
         </div>
         <div className=" flex w-full justify-center">
