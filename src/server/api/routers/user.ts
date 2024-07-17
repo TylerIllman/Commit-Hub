@@ -1,6 +1,7 @@
 import type { Record } from "@prisma/client/runtime/library";
 import { z } from "zod";
 import type { Streak } from "@prisma/client";
+import { isNextDay, isSameDay } from "~/lib/utils";
 
 import {
   createTRPCRouter,
@@ -8,6 +9,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import { loadEnvFile } from "process";
 
 const streakCompletionSchema = z.object({
   userId: z.string(),
@@ -85,13 +87,20 @@ export const userRouter = createTRPCRouter({
 
       const streakCompletions: StreakCompletionsObject = {};
       const totalCompletionsByDate: CalendarValue[] = [];
-      let currentDate: null | string = null;
+      let currentDate: null | Date = null;
       let currentNumCompletions = 0;
       let longestStreak = 0;
-      let currStreak = 1;
+      let currStreak = 0;
+      const streakStartDates = new Map();
+
+      streaks.forEach((streak) => {
+        streakStartDates.set(streak.id, streak.startDate);
+      });
+
+      console.log(streakStartDates);
 
       completions.forEach((completion) => {
-        const newDate = completion.createdAt.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+        const newDate = new Date(completion.createdAt);
 
         if (!streakCompletions[completion.streakId]) {
           streakCompletions[completion.streakId] = [];
@@ -101,15 +110,57 @@ export const userRouter = createTRPCRouter({
         // if count oncurrDay === num streaks b4 that day currStreak++
         // if gap in days currStreak = 0
 
-        if (currentDate === newDate) {
+        if (currentDate && isSameDay(currentDate, newDate)) {
           currentNumCompletions++;
         } else {
           if (currentDate !== null) {
             totalCompletionsByDate.push({
-              date: new Date(currentDate),
+              date: currentDate,
               count: currentNumCompletions,
             });
           }
+          const targetStreaks = streaks.reduce((acc, streak) => {
+            if (currentDate && currentDate > streak.startDate) {
+              acc += 1;
+            }
+            return acc;
+          }, 0);
+
+          if (currentDate) {
+            console.log(
+              "currdate: ",
+              currentDate,
+              " newdate: ",
+              newDate,
+              " isnextday: ",
+              isNextDay(newDate, currentDate),
+            );
+          }
+          if (
+            currentDate &&
+            targetStreaks != 0 &&
+            currentNumCompletions === targetStreaks &&
+            isNextDay(newDate, currentDate)
+          ) {
+            currStreak += 1;
+          } else {
+            longestStreak = Math.max(currStreak, longestStreak);
+            currStreak = 0;
+          }
+
+          console.log(
+            "currDate: ",
+            currentDate,
+            "targe: ",
+            targetStreaks,
+            " num Completions: ",
+            currentNumCompletions,
+            " currStreak: ",
+            currStreak,
+            " longest streak: ",
+            longestStreak,
+          );
+
           currentDate = newDate;
           currentNumCompletions = 1; // Reset for the new date
         }
@@ -124,7 +175,8 @@ export const userRouter = createTRPCRouter({
       // Ensure the last date's data is added
       if (completions.length > 0) {
         totalCompletionsByDate.push({
-          date: new Date(currentDate),
+          //WARNING: Was previously a new Date(currentDate). Changed after making the new date a Date type
+          date: currentDate,
           count: currentNumCompletions,
         });
       }

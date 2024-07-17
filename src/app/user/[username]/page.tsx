@@ -12,14 +12,7 @@ import type { streakWithCompletion } from "~/server/api/routers/user";
 import { useEffect, useState } from "react";
 import { StreakCompletion } from "@prisma/client";
 import type { CalendarValue } from "~/server/api/routers/user";
-
-function isSameDay(d1: Date, d2: Date) {
-  return (
-    d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate()
-  );
-}
+import { isSameDay } from "~/lib/utils";
 
 interface UserPageProps {
   params: {
@@ -41,6 +34,7 @@ const Page = ({ params }: UserPageProps) => {
   const [hasStreaks, setHasStreaks] = useState<boolean>(false);
   const [currStreak, setCurrStreak] = useState<number>(0);
   const [completedTodayCount, setCompletedTodayCount] = useState(0); // State to store the count
+  const [longestSteak, setLongestStreak] = useState(0);
 
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
@@ -81,6 +75,7 @@ const Page = ({ params }: UserPageProps) => {
       setMasterStreak(streaksData.masterStreak);
       setHasStreaks(streaksData.hasStreaks);
       setCompletedTodayCount(countCompleted);
+      setLongestStreak(streaksData.longestStreak);
     }
   }, [streaksData, isSuccess]);
 
@@ -131,7 +126,7 @@ const Page = ({ params }: UserPageProps) => {
               Joined: May 2024
             </span>
             <span className="whitespace-nowrap text-xl text-muted-foreground">
-              Longest Streak: 42
+              Longest Streak: {longestSteak}
             </span>
           </div>
 
