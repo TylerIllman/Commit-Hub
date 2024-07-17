@@ -15,6 +15,7 @@ import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { count } from "console";
+import { Share } from "lucide-react";
 
 interface UserPageProps {
   params: {
@@ -24,6 +25,27 @@ interface UserPageProps {
 
 type StreaksCompletedTodayType = Record<number, boolean>;
 
+const useClipboard = () => {
+  const [isCopied, setIsCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const copy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setError(null);
+      // Optionally reset the copied status after a delay
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      setError(err);
+      setIsCopied(false);
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  return { copy, isCopied, error };
+};
+
 const Page = ({ params }: UserPageProps) => {
   // TODO: Need to add an auth callback for when user doesnt exist, or is missing details
   const { onOpen } = useModal();
@@ -32,6 +54,7 @@ const Page = ({ params }: UserPageProps) => {
 
   const userQuery = api.user.getUser.useQuery({ userName: username });
   const userId = userQuery.data?.user?.id;
+  const { copy, isCopied, error } = useClipboard();
 
   const [userStreaks, setUserStreaks] = useState<streakWithCompletion[]>([]);
   const [masterStreak, setMasterStreak] = useState<CalendarValue[]>([]);
@@ -194,13 +217,6 @@ const Page = ({ params }: UserPageProps) => {
         },
       },
     );
-
-    // const updatedStreaks = userStreaks.map((streak) => {
-    //   if (streak.id === streakId) {
-    //     return { ...streak };
-    //   }
-    //   return streak;
-    // });
   };
 
   return (
@@ -216,9 +232,19 @@ const Page = ({ params }: UserPageProps) => {
           <div className="p-1"></div>
 
           <div className="flex flex-row items-end gap-4">
-            <span className="flex-nowrap whitespace-nowrap text-xl text-blue-600">
-              @{userQuery.data.user.userName}
-            </span>
+            <div
+              className="flex cursor-pointer flex-row flex-nowrap whitespace-nowrap text-xl text-blue-600 hover:text-blue-400"
+              onClick={() => {
+                //TODO: Change base url to dynamic base url
+                copy(`commit-hub.com/${username}`)
+                  .then(() => console.log("text copied"))
+                  .catch((err) => console.log(err));
+              }}
+            >
+              <span>@{userQuery.data.user.userName}</span>
+              <div className="p-1"></div>
+              <Share />
+            </div>
             <span className="flex whitespace-nowrap text-xl text-muted-foreground">
               Joined: May 2024
             </span>
@@ -278,7 +304,7 @@ const Page = ({ params }: UserPageProps) => {
                 <div
                   key={`streakview-${streak.id}`}
                   className={cn(
-                    "flex h-24 w-24 items-center justify-center rounded-full border bg-card text-6xl",
+                    "flex h-24 w-24 cursor-default select-none items-center justify-center rounded-full border bg-card text-6xl",
                     { "bg-primary": completedToday },
                   )}
                 >
