@@ -34,6 +34,10 @@ const addStreakCompletionSchema = z.object({
   streakId: z.number(),
 });
 
+const DeleteStreakSchema = z.object({
+  streakId: z.number(),
+});
+
 const GetStreakDetailsSchema = z.object({
   streakId: z.number(),
 });
@@ -132,5 +136,22 @@ export const streaksRouter = createTRPCRouter({
       });
 
       return streakRes;
+    }),
+
+  //TODO: Need to add proper error handling and response objects
+  deleteStreak: protectedProcedure
+    .input(DeleteStreakSchema)
+    .mutation(async ({ input, ctx }) => {
+      console.log(input);
+      const deleteStreakRes = await db.streak.delete({
+        where: {
+          id: input.streakId,
+          // userId: ctx.user.id,
+        },
+      });
+
+      console.log(deleteStreakRes);
+
+      return deleteStreakRes;
     }),
 });

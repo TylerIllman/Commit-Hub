@@ -47,8 +47,10 @@ export const EditStreakModal = () => {
   const { onOpen, isOpen, onClose, type, data } = useModal();
   const isModalOpen = isOpen && type === "editStreakSettings";
   const [copied, setCopied] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const updateStreakMutation = api.streaks.updateStreakDetails.useMutation();
+  const deleteStreakMutation = api.streaks.deleteStreak.useMutation();
 
   const form = useForm({
     resolver: zodResolver(createStreakFormSchema),
@@ -102,6 +104,20 @@ export const EditStreakModal = () => {
   const handleClose = () => {
     form.reset();
     onClose();
+  };
+
+  const handleDeleteClick = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!data.streakId) {
+      console.log("ERROR: No streak Id");
+      return;
+    }
+    deleteStreakMutation.mutate({ streakId: data.streakId });
+    onClose();
+    setShowConfirmation(false);
   };
 
   return (
@@ -201,11 +217,41 @@ export const EditStreakModal = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
+              <Button
+                onClick={handleDeleteClick}
+                disabled={isLoading}
+                variant="destructive"
+              >
+                Delete Streak
+              </Button>
               <Button disabled={isLoading}>Update Streak Details</Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
+
+      {/* Confirmation Modal */}
+      {showConfirmation && (
+        <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
+          <DialogContent>
+            <DialogTitle>
+              Are you sure you want to delete this streak?
+            </DialogTitle>
+            <DialogFooter>
+              <Button onClick={handleConfirmDelete} variant="destructive">
+                Confirm Delete
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowConfirmation(false);
+                }}
+              >
+                Cancel
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 };
