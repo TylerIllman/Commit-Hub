@@ -10,12 +10,9 @@ import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
 import type { streakWithCompletion } from "~/server/api/routers/user";
 import { useEffect, useState } from "react";
-import { StreakCompletion } from "@prisma/client";
 import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
-import { ValueOf } from "next/dist/shared/lib/constants";
-import { count } from "console";
-import { Share } from "lucide-react";
+import { ExternalLink, FileCog, Share } from "lucide-react";
 
 interface UserPageProps {
   params: {
@@ -258,9 +255,7 @@ const Page = ({ params }: UserPageProps) => {
 
         <div className="flex w-full justify-end">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center">
-            <span className="text-text-400 text-xl">
-              Total Streak Completions
-            </span>
+            <span className="text-text-400 text-xl">Streak Completions</span>
             <span className="flex text-6xl font-bold">
               🔥 {totalNumCompletions}
             </span>
@@ -334,13 +329,51 @@ const Page = ({ params }: UserPageProps) => {
 
       <div className="p-4"></div>
       {isSuccess && hasStreaks ? (
+        //TODO: Add the ability to edit and delete streaks
         userStreaks.map((streak) => (
           <div key={`commitCal-${streak.id}`}>
             <Card>
               <div className="p-6">
-                <h2 className="pb-4 text-5xl font-bold md:text-4xl">
-                  {streak.emoji} {streak.name}
-                </h2>
+                <div className="flex flex-row items-center justify-between pb-2">
+                  <div className="flex flex-row items-center">
+                    <h2 className=" text-5xl font-bold md:text-4xl">
+                      {streak.emoji} {streak.name}
+                    </h2>
+                    <div className="p-2"></div>
+                    {/* TODO: Convert this compoent into Shadcn button link variant */}
+                    {streak.url && (
+                      <ExternalLink
+                        className="text-blue-600 hover:cursor-pointer hover:text-blue-400"
+                        onClick={() => {
+                          //HACK: Need to have proper error handling for:
+                          if (!streak.url) {
+                            console.log("error: no streak url");
+                            return;
+                          }
+                          window.open(streak.url, "_blank")?.focus();
+                        }}
+                      />
+                    )}
+                  </div>
+                  {userOwnsPage && (
+                    <FileCog
+                      className="text-muted-foreground hover:cursor-pointer hover:text-blue-400"
+                      onClick={() => {
+                        console.log("settings clicked: ", streak.id);
+                        onOpen("editStreakSettings", {
+                          streakId: streak.id,
+                          streakName: streak.name,
+                          streakEmoji: streak.emoji,
+                          //HACK: Default string values for url and description may break
+                          streakUrl: streak.url ?? "",
+                          streakDescription: streak.description ?? "",
+                        });
+                      }}
+                    />
+                  )}
+                </div>
+                <p className="text-muted-foreground">{streak.description}</p>
+                <div className="p-2"></div>
                 <CommitCalendar values={streak.completions} />
               </div>
             </Card>

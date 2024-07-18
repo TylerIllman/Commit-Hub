@@ -7,7 +7,7 @@ import {
 } from "~/components/ui/dialog";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { useOrigin } from "~/hooks/use-origin";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "~/hooks/use-modal-store";
 import { Label } from "~/components/ui/label";
 import { Input } from "../ui/input";
@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { api } from "~/trpc/react";
+import { UpdateStreakDetailsSchema } from "~/server/api/routers/streaks";
 
 export const createStreakFormSchema = z.object({
   name: z.string().min(1, { message: "A streak name is required" }),
@@ -42,14 +43,12 @@ export const createStreakFormSchema = z.object({
   emoji: z.string().emoji({ message: "This must contain a single emoji" }),
 });
 
-export const CreateStreakModal = () => {
+export const EditStreakModal = () => {
   const { onOpen, isOpen, onClose, type, data } = useModal();
-  const isModalOpen = isOpen && type === "createStreak";
+  const isModalOpen = isOpen && type === "editStreakSettings";
   const [copied, setCopied] = useState(false);
-  const createStreakMutation = api.streaks.createNewStreak.useMutation();
 
-  // const test = api.user.testMutation.useMutation();
-  // const res = test.mutate();
+  const updateStreakMutation = api.streaks.updateStreakDetails.useMutation();
 
   const form = useForm({
     resolver: zodResolver(createStreakFormSchema),
@@ -61,17 +60,42 @@ export const CreateStreakModal = () => {
     },
   });
 
+  useEffect(() => {
+    if (data.streakName) form.setValue("name", data.streakName);
+    if (data.streakEmoji) form.setValue("emoji", data.streakEmoji);
+    if (data.streakUrl) form.setValue("url", data.streakUrl);
+    if (data.streakDescription)
+      form.setValue("description", data.streakDescription);
+  }, [data, form]); //WARNING: I don't think this is the correct dependencies
+
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (values: z.infer<typeof createStreakFormSchema>) => {
-    console.log("Values: ", values);
+  const onSubmit = async (
+    values: z.infer<typeof UpdateStreakDetailsSchema>,
+  ) => {
+    //HACK: this needs to be converted to error handling, currently just hack to remove data.streakId?
+    if (!data.streakId) {
+      console.log("no streak id");
+      return;
+    }
+
+    console.log("values: ", values);
+    console.log("desc: ", values.description);
+    console.log(
+      "test: ",
+      values.description != "" ? values.description : undefined,
+    );
+
     const cleanVals = {
       ...values,
+      streakId: data.streakId,
       url: values.url != "" ? values.url : undefined,
       description: values.description != "" ? values.description : undefined,
     };
-    console.log(cleanVals);
-    createStreakMutation.mutate(cleanVals);
+
+    console.log("clean Vals: ", cleanVals);
+
+    updateStreakMutation.mutate(cleanVals);
     handleClose();
   };
 
@@ -85,9 +109,9 @@ export const CreateStreakModal = () => {
       <DialogContent className="overflow-hidden bg-white p-0 text-black">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
-            Create A New Streak
+            Edit Streak
           </DialogTitle>
-          {/* <DialogDescription>* icons denote required fields</DialogDescription> */}
+          {/* <DialogDescription>Create a new daily streak</DialogDescription> */}
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -98,7 +122,7 @@ export const CreateStreakModal = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
-                      Streak name *
+                      Streak name
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -119,7 +143,7 @@ export const CreateStreakModal = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
-                      Emoji *
+                      Emoji
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -177,7 +201,7 @@ export const CreateStreakModal = () => {
               />
             </div>
             <DialogFooter className="bg-gray-100 px-6 py-4">
-              <Button disabled={isLoading}>Create New Streak</Button>
+              <Button disabled={isLoading}>Update Streak Details</Button>
             </DialogFooter>
           </form>
         </Form>

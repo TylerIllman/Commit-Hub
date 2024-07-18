@@ -1,9 +1,14 @@
 import { create } from "zustand";
 
-export type ModalType = "createStreak";
+export type ModalType = "createStreak" | "editStreakSettings";
 
 interface ModalData {
   userId?: string;
+  streakName?: string;
+  streakEmoji?: string;
+  streakUrl?: string;
+  streakDescription?: string;
+  streakId?: number;
 }
 
 interface ModalStore {

@@ -18,11 +18,23 @@ import { db } from "~/server/db";
 const createStreakFormSchema = z.object({
   name: z.string(),
   url: z.string().url().optional(),
-  descpription: z.string().optional(),
+  description: z.string().optional(),
+  emoji: z.string().emoji({ message: "This must contain a single emoji" }),
+});
+
+export const UpdateStreakDetailsSchema = z.object({
+  streakId: z.number(),
+  name: z.string(),
+  url: z.string().url().optional(),
+  description: z.string().optional(),
   emoji: z.string().emoji({ message: "This must contain a single emoji" }),
 });
 
 const addStreakCompletionSchema = z.object({
+  streakId: z.number(),
+});
+
+const GetStreakDetailsSchema = z.object({
   streakId: z.number(),
 });
 
@@ -35,7 +47,7 @@ export const streaksRouter = createTRPCRouter({
         userId: ctx.user.id,
         name: input.name,
         emoji: input.emoji,
-        ...(input.descpription ? { description: input.descpription } : {}),
+        ...(input.description ? { description: input.description } : {}),
         ...(input.url ? { url: input.url } : {}),
       };
 
@@ -90,5 +102,35 @@ export const streaksRouter = createTRPCRouter({
           },
         });
       }
+    }),
+
+  getStreakDetails: publicProcedure
+    .input(GetStreakDetailsSchema)
+    .query(async ({ input }) => {
+      return await db.streak.findFirst({
+        where: {
+          id: input.streakId,
+        },
+      });
+    }),
+
+  updateStreakDetails: protectedProcedure
+    .input(UpdateStreakDetailsSchema)
+    .mutation(async ({ input, ctx }) => {
+      console.log("input: ", input);
+      const streakRes = await db.streak.update({
+        where: {
+          id: input.streakId,
+          userId: ctx.user.id,
+        },
+        data: {
+          name: input.name,
+          emoji: input.emoji,
+          url: input.url,
+          description: input.description,
+        },
+      });
+
+      return streakRes;
     }),
 });
