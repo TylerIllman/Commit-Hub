@@ -68,7 +68,10 @@ const Page = ({ params }: UserPageProps) => {
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
 
-  const userOwnsPage = activeUser.user?.id == userQuery.data?.user?.id;
+  //WARNING: Due to deleting prev tylerillman user from db, when adding it back it required new unique
+  //(NOT) the one from clerk causing mismatch in userOwnsPage
+  const userOwnsPage = activeUser.user?.username == username;
+  // const userOwnsPage = activeUser.user?.id == userQuery.data?.user?.id;
 
   const dateStart = new Date();
   dateStart.setHours(0, 0, 0, 0); // Start of today
@@ -123,6 +126,15 @@ const Page = ({ params }: UserPageProps) => {
   if (!userQuery.data?.isUser || !userQuery.data.user) {
     return <div>No user</div>;
   }
+
+  console.log("active user: ", activeUser);
+  console.log("user owns page: ", userOwnsPage);
+  console.log(
+    "activeUser ID: ",
+    activeUser.user?.id,
+    " db ID: ",
+    userQuery.data.user.id,
+  );
 
   const handleStreakCompletion = (
     streakId: number,
@@ -250,7 +262,7 @@ const Page = ({ params }: UserPageProps) => {
             </span>
           </div>
 
-          <div className="p-2"></div>
+          {/* <div className="p-2"></div> */}
         </div>
 
         <div className="flex w-full justify-end">
@@ -271,9 +283,8 @@ const Page = ({ params }: UserPageProps) => {
           </div>
         </div>
       </div>
-
+      {/* TODO: Check this styling for when a user has no streaks */}
       <div className="p-2"></div>
-
       <div className="flex flex-row items-center gap-4">
         <div className="flex flex-row items-center gap-4">
           {isSuccess && hasStreaks ? (
@@ -312,9 +323,7 @@ const Page = ({ params }: UserPageProps) => {
           )}
         </div>
       </div>
-
       <div className="p-4"></div>
-
       {isSuccess && hasStreaks ? (
         //TODO: Add link and description rendering
         <Card>
@@ -326,7 +335,6 @@ const Page = ({ params }: UserPageProps) => {
       ) : (
         <div>loading</div>
       )}
-
       <div className="p-4"></div>
       {isSuccess && hasStreaks ? (
         //TODO: Add the ability to edit and delete streaks
@@ -383,7 +391,6 @@ const Page = ({ params }: UserPageProps) => {
       ) : (
         <div>No streaks found</div>
       )}
-
       {userOwnsPage && (
         <div className="flex w-full items-center justify-center">
           <Button

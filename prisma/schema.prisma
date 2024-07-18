@@ -8,17 +8,7 @@ generator client {
 
 datasource db {
     provider = "sqlite"
-    // url      = env("TURSO_DATABASE_URL")
     url      = env("DATABASE_URL") // Used for dummy migrations to Turso
-}
-
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    @@index([name])
 }
 
 model User {
@@ -30,6 +20,9 @@ model User {
 
     lastName String?
 
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     streak Streak[]
 
     @@index([id])
@@ -37,9 +30,10 @@ model User {
 }
 
 model Streak {
-    id    Int    @id @default(autoincrement())
-    name  String
-    emoji String
+    id       Int     @id @default(autoincrement())
+    name     String
+    emoji    String
+    isPublic Boolean @default(true)
 
     description String?
     url         String?
@@ -59,7 +53,7 @@ model StreakCompletion {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    streak   Streak @relation(fields: [streakId], references: [id])
+    streak   Streak @relation(fields: [streakId], references: [id], onDelete: Cascade)
     streakId Int
 
     @@index([streakId])

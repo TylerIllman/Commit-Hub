@@ -4,6 +4,8 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import { api } from "~/trpc/react";
 import { db } from "~/server/db";
 
+//WARNING: Error when attempts to do multiple account creations
+//TODO: Fix multiple account creation webhooks being sent error
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET;
