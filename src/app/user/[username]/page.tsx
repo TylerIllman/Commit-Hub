@@ -127,15 +127,6 @@ const Page = ({ params }: UserPageProps) => {
     return <div>No user</div>;
   }
 
-  console.log("active user: ", activeUser);
-  console.log("user owns page: ", userOwnsPage);
-  console.log(
-    "activeUser ID: ",
-    activeUser.user?.id,
-    " db ID: ",
-    userQuery.data.user.id,
-  );
-
   const handleStreakCompletion = (
     streakId: number,
     completions: CalendarValue[],

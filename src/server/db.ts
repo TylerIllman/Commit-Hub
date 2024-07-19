@@ -1,12 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-// import { env } from "~/env";
-import dotenv from "dotenv";
-
 import { createClient } from "@libsql/client";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
-
-dotenv.config();
 
 // TODO: Convert this to use the env.js file so it is dynamic (and not the 'dotenv')
 const libsql = createClient({
