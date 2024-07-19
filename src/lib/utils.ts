@@ -25,3 +25,16 @@ export function isNextDay(d1: Date, d2: Date) {
 
   return isSameDay(nextDay, d2);
 }
+
+export const formatDate = (initDate: Date) => {
+  try {
+    const date = new Date(initDate);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      year: "numeric",
+    }).format(date);
+  } catch (error) {
+    console.error("Failed to format date:", error);
+    return "Recently"; // Return a default or error-specific string
+  }
+};

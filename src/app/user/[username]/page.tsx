@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
 import { ExternalLink, FileCog, Share } from "lucide-react";
+import { formatDate } from "~/lib/utils";
 
 interface UserPageProps {
   params: {
@@ -93,36 +94,38 @@ const Page = ({ params }: UserPageProps) => {
 
   useEffect(() => {
     if (isSuccess && streaksData) {
-      //TODO: Fix incorrect call error (may need better typing in the tRPC route)
       setMasterStreak(streaksData.masterStreak);
       setHasStreaks(streaksData.hasStreaks);
       setLongestStreak(streaksData.longestStreak);
       setCurrentActiveStreak(streaksData.currentActiveStreak);
 
-      if (streaksData.streaks) {
-        setUserStreaks(streaksData.streaks);
+      if (streaksData.totalNumCompletions) {
+        setTotalNumCompletions(streaksData.totalNumCompletions);
       }
 
-      setTotalNumCompletions(streaksData.totalNumCompletions);
+      //TODO: Fix these calls should be more type safe
+      if (streaksData.streaks) {
+        setUserStreaks(streaksData.streaks);
 
-      const today = new Date();
-      const tempStreaksCompletedToday: StreaksCompletedTodayType = {};
-      let countCompleted = 0;
+        const today = new Date();
+        const tempStreaksCompletedToday: StreaksCompletedTodayType = {};
+        let countCompleted = 0;
 
-      streaksData.streak.forEach((streak: streakWithCompletion) => {
-        if (
-          streak.completions[0] &&
-          isSameDay(streak.completions[0].date, today)
-        ) {
-          tempStreaksCompletedToday[streak.id] = true;
-          countCompleted++;
-        } else {
-          tempStreaksCompletedToday[streak.id] = false;
-        }
-      });
+        streaksData.streaks.forEach((streak: streakWithCompletion) => {
+          if (
+            streak.completions[0] &&
+            isSameDay(streak.completions[0].date, today)
+          ) {
+            tempStreaksCompletedToday[streak.id] = true;
+            countCompleted++;
+          } else {
+            tempStreaksCompletedToday[streak.id] = false;
+          }
+        });
 
-      setCompletedTodayCount(countCompleted);
-      setStreaksCompletedToday(tempStreaksCompletedToday);
+        setCompletedTodayCount(countCompleted);
+        setStreaksCompletedToday(tempStreaksCompletedToday);
+      }
     }
   }, [streaksData, isSuccess]);
 
@@ -250,9 +253,12 @@ const Page = ({ params }: UserPageProps) => {
               <div className="p-1"></div>
               <Share />
             </div>
-            <span className="flex whitespace-nowrap text-xl text-muted-foreground">
-              Joined: May 2024
-            </span>
+            {userQuery.data.user.createdAt && (
+              <span className="flex whitespace-nowrap text-xl text-muted-foreground">
+                {/* HACK: Force casting the type of this to a Date (Should be ok due database structure) */}
+                {formatDate(userQuery.data.user.createdAt as Date)}
+              </span>
+            )}
             <span className="whitespace-nowrap text-xl text-muted-foreground">
               Longest Streak: {longestSteak}
             </span>
