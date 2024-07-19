@@ -72,9 +72,7 @@ export const EditStreakModal = () => {
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async (
-    values: z.infer<typeof UpdateStreakDetailsSchema>,
-  ) => {
+  const onSubmit = async (values: z.infer<typeof createStreakFormSchema>) => {
     //HACK: this needs to be converted to error handling, currently just hack to remove data.streakId?
     if (!data.streakId) {
       console.log("no streak id");

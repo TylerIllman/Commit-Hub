@@ -15,6 +15,7 @@ import { db } from "~/server/db";
 //   description: string;
 // }
 
+//TODO: Centralise these schemas to a single "schema" file
 const createStreakFormSchema = z.object({
   name: z.string(),
   url: z.string().url().optional(),
