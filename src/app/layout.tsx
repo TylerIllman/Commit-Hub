@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { ModalProvider } from "~/components/providers/modal-provider";
+import Navbar from "~/components/Navbar";
 
 export const metadata = {
   title: "Commithub",
@@ -24,6 +25,7 @@ export default function RootLayout({
         <body>
           <TRPCReactProvider>
             <ModalProvider />
+            <Navbar />
             {children}
           </TRPCReactProvider>
         </body>

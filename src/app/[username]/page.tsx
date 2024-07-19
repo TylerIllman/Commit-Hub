@@ -12,7 +12,7 @@ import type { streakWithCompletion } from "~/server/api/routers/user";
 import { useEffect, useState } from "react";
 import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
-import { ExternalLink, FileCog, Share } from "lucide-react";
+import { ExternalLink, Settings, Share } from "lucide-react";
 import { formatDate } from "~/lib/utils";
 
 interface UserPageProps {
@@ -58,7 +58,7 @@ const Page = ({ params }: UserPageProps) => {
   const [userStreaks, setUserStreaks] = useState<streakWithCompletion[]>([]);
   const [masterStreak, setMasterStreak] = useState<CalendarValue[]>([]);
   const [hasStreaks, setHasStreaks] = useState<boolean>(false);
-  const [currStreak, setCurrStreak] = useState<number>(0);
+  // const [currStreak, setCurrStreak] = useState<number>(0);
   const [completedTodayCount, setCompletedTodayCount] = useState(0); // State to store the count
   const [longestSteak, setLongestStreak] = useState(0);
   const [currentActiveStreak, setCurrentActiveStreak] = useState(0);
@@ -225,7 +225,7 @@ const Page = ({ params }: UserPageProps) => {
   };
 
   return (
-    <div className="flex w-full max-w-[1600px] flex-col">
+    <div className="flex w-full max-w-[1400px] flex-col">
       <div className="flex w-full justify-start gap-2">
         <div className="flex flex-col">
           <div className="flex flex-row items-center gap-4">
@@ -253,7 +253,7 @@ const Page = ({ params }: UserPageProps) => {
             {userQuery.data.user.createdAt && (
               <span className="flex whitespace-nowrap text-xl text-muted-foreground">
                 {/* HACK: Force casting the type of this to a Date (Should be ok due database structure) */}
-                {formatDate(userQuery.data.user.createdAt as Date)}
+                Joined: {formatDate(userQuery.data.user.createdAt as Date)}
               </span>
             )}
             <span className="whitespace-nowrap text-xl text-muted-foreground">
@@ -362,8 +362,8 @@ const Page = ({ params }: UserPageProps) => {
                     )}
                   </div>
                   {userOwnsPage && (
-                    <FileCog
-                      className="text-muted-foreground hover:cursor-pointer hover:text-blue-400"
+                    <Settings
+                      className="h-8 w-8 text-muted-foreground hover:cursor-pointer hover:text-blue-400"
                       onClick={() => {
                         console.log("settings clicked: ", streak.id);
                         onOpen("editStreakSettings", {
