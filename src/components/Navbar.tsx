@@ -16,8 +16,9 @@ const Navbar = () => {
     <nav className="sticky inset-x-0 top-0 z-30 h-14 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
         <div className="flex h-14 items-center justify-between border-b border-zinc-200">
-          <Link href="/" className="z-40 flex font-semibold">
-            CommitHub
+          <Link href="/" className="flex font-bold">
+            <span className="px-0.5 py-0.5">Commit</span>
+            <span className="rounded-sm bg-primary px-1.5 py-0.5">hub</span>
           </Link>
 
           <MobileNav isAuth={!!user} />
@@ -45,20 +46,20 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Button
-                  onClick={() => {
-                    setTheme("dark");
-                  }}
-                >
-                  Dark
-                </Button>
-                <Button
-                  onClick={() => {
-                    setTheme("light");
-                  }}
-                >
-                  light
-                </Button>
+                {/* <Button */}
+                {/*   onClick={() => { */}
+                {/*     setTheme("dark"); */}
+                {/*   }} */}
+                {/* > */}
+                {/*   Dark */}
+                {/* </Button> */}
+                {/* <Button */}
+                {/*   onClick={() => { */}
+                {/*     setTheme("light"); */}
+                {/*   }} */}
+                {/* > */}
+                {/*   light */}
+                {/* </Button> */}
                 <Link
                   className={buttonVariants({
                     variant: "ghost",

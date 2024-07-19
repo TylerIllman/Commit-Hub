@@ -253,7 +253,7 @@ const Page = ({ params }: UserPageProps) => {
             {userQuery.data.user.createdAt && (
               <span className="flex whitespace-nowrap text-xl text-muted-foreground">
                 {/* HACK: Force casting the type of this to a Date (Should be ok due database structure) */}
-                Joined: {formatDate(userQuery.data.user.createdAt as Date)}
+                Joined: {formatDate(userQuery.data.user.createdAt)}
               </span>
             )}
             <span className="whitespace-nowrap text-xl text-muted-foreground">

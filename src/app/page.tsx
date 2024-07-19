@@ -1,30 +1,20 @@
 "use client";
 
-import { SignInButton, SignOutButton } from "@clerk/nextjs";
-import { Button } from "~/components/ui/button";
+import { ArrowRight, Link } from "lucide-react";
 import { useTheme } from "next-themes";
+import { Button, buttonVariants } from "~/components/ui/button";
 
 export default function Home() {
   const { setTheme, theme } = useTheme();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
-      <SignInButton />
-      <SignOutButton />
-      <Button
-        onClick={() => {
-          setTheme("dark");
-        }}
-      >
-        Dark
-      </Button>
-      <Button
-        onClick={() => {
-          setTheme("light");
-        }}
-      >
-        light
-      </Button>
-      <div>{theme}</div>
+      <h1 className="text-center text-8xl font-bold">Turn Plans Into</h1>
+      <div className="p-2"></div>
+      <h1 className="text-center text-8xl font-bold">
+        <span className="rounded-md bg-primary px-4 py-1">Commitments</span>
+      </h1>
+      <div className="p-4"></div>
     </main>
   );
 }
