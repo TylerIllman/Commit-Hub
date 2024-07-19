@@ -71,7 +71,11 @@ export async function POST(req: Request) {
     console.error(
       "Webhook event is missing data (username, email, firstName or lastName)",
     );
-    return { status: 500, message: "Webhook event missing required user data" };
+
+    return new Response(
+      "Webhook event is missing data (username, email, firstName or lastName)",
+      { status: 400 },
+    );
   }
 
   // console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
@@ -97,5 +101,5 @@ export async function POST(req: Request) {
     });
   }
 
-  return new Response("", { status: 200 });
+  return new Response("User created Successfully", { status: 200 });
 }
