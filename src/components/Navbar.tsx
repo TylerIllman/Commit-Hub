@@ -1,13 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, House } from "lucide-react";
-import { currentUser } from "@clerk/nextjs/server";
 import MaxWidthWrapper from "./maxWidthWrapper";
 import MobileNav from "./mobileNav";
-import { buttonVariants } from "./ui/button";
-import { UserButton } from "@clerk/nextjs";
+import { Button, buttonVariants } from "./ui/button";
+import { UserButton, useUser } from "@clerk/nextjs";
+import { useTheme } from "next-themes";
 
-const Navbar = async () => {
-  const user = await currentUser();
+const Navbar = () => {
+  const { user } = useUser();
+  const { setTheme } = useTheme();
 
   return (
     <nav className="sticky inset-x-0 top-0 z-30 h-14 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
@@ -42,6 +45,20 @@ const Navbar = async () => {
               </>
             ) : (
               <>
+                <Button
+                  onClick={() => {
+                    setTheme("dark");
+                  }}
+                >
+                  Dark
+                </Button>
+                <Button
+                  onClick={() => {
+                    setTheme("light");
+                  }}
+                >
+                  light
+                </Button>
                 <Link
                   className={buttonVariants({
                     variant: "ghost",
