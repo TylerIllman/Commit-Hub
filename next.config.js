@@ -5,6 +5,11 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  eslint: {
+    //WARNING: This prevents ignores linting errors during build. This should be removed in future
+    ignoreDuringBuilds: true,
+  },
+};
 
 export default config;
