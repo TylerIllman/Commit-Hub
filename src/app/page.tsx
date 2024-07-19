@@ -1,11 +1,14 @@
 "use client";
 
-import { ArrowRight, Link } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button, buttonVariants } from "~/components/ui/button";
+import { useUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 export default function Home() {
-  const { setTheme, theme } = useTheme();
+  const { user } = useUser();
+
+  if (user?.username) {
+    redirect(`/${user.username}`);
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
