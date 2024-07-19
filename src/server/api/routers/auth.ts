@@ -13,21 +13,24 @@ export const authRouter = createTRPCRouter({
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
-    const dbUser = await ctx.db.user.findFirst({
-      where: {
-        id: ctx.user.id,
-      },
-    });
+    // const dbUser = await ctx.db.user.findFirst({
+    //   where: {
+    //     id: ctx.user.id,
+    //   },
+    // });
 
-    console.log("db user: ", dbUser);
+    // console.log("db user: ", dbUser);
 
-    if (!dbUser) {
-      await db.user.create({
-        data: {
-          id: ctx.user.id,
-        },
-      });
-    }
+    // TODO: Create auth callback for backup when clerk user created webhook doesn't work
+
+    // if (!dbUser) {
+    //   await db.user.create({
+    //     data: {
+    //       id: ctx.user.id,
+    //       userName: ctx.user.username,
+    //     },
+    //   });
+    // }
 
     return { success: true };
   }),
