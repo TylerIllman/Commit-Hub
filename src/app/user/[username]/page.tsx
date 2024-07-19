@@ -34,7 +34,8 @@ const useClipboard = () => {
       // Optionally reset the copied status after a delay
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      setError(err);
+      //HACK: Force type as string to fix linting error
+      setError(err as string);
       setIsCopied(false);
       console.error("Failed to copy:", err);
     }
@@ -93,18 +94,22 @@ const Page = ({ params }: UserPageProps) => {
   useEffect(() => {
     if (isSuccess && streaksData) {
       //TODO: Fix incorrect call error (may need better typing in the tRPC route)
-      setUserStreaks(streaksData.streaks);
       setMasterStreak(streaksData.masterStreak);
       setHasStreaks(streaksData.hasStreaks);
       setLongestStreak(streaksData.longestStreak);
       setCurrentActiveStreak(streaksData.currentActiveStreak);
+
+      if (streaksData.streaks) {
+        setUserStreaks(streaksData.streaks);
+      }
+
       setTotalNumCompletions(streaksData.totalNumCompletions);
 
       const today = new Date();
       const tempStreaksCompletedToday: StreaksCompletedTodayType = {};
       let countCompleted = 0;
 
-      streaksData.streaks.forEach((streak: streakWithCompletion) => {
+      streaksData.streak.forEach((streak: streakWithCompletion) => {
         if (
           streak.completions[0] &&
           isSameDay(streak.completions[0].date, today)
