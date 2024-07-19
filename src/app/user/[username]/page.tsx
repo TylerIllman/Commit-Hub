@@ -70,10 +70,7 @@ const Page = ({ params }: UserPageProps) => {
   const streakCompletionMutation =
     api.streaks.addStreakCompletion.useMutation();
 
-  //WARNING: Due to deleting prev tylerillman user from db, when adding it back it required new unique
-  //(NOT) the one from clerk causing mismatch in userOwnsPage
-  const userOwnsPage = activeUser.user?.username == username;
-  // const userOwnsPage = activeUser.user?.id == userQuery.data?.user?.id;
+  const userOwnsPage = activeUser.user?.id == userQuery.data?.user?.id;
 
   const dateStart = new Date();
   dateStart.setHours(0, 0, 0, 0); // Start of today
