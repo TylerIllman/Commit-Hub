@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { createClient } from "@libsql/client";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
 
-// TODO: Convert this to use the env.js file so it is dynamic (and not the 'dotenv')
+// TODO: Convert this to use the env.js file so it is dynamic
 const libsql = createClient({
   url: `${process.env.DATABASE_URL}`,
   authToken: `${process.env.TURSO_AUTH_TOKEN}`,

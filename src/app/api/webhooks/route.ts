@@ -65,6 +65,15 @@ export async function POST(req: Request) {
   const firstName = evt.data.first_name;
   const lastName = evt.data.last_name;
   const email = evt.data.email_addresses[0]?.email_address;
+
+  //TODO: Confirm this is the correct way to respond (correct obj and staus code)
+  if (!username || !firstName || !lastName || !email) {
+    console.error(
+      "Webhook event is missing data (username, email, firstName or lastName)",
+    );
+    return { status: 500, message: "Webhook event missing required user data" };
+  }
+
   // console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
   // console.log("Webhook body:", body);
 

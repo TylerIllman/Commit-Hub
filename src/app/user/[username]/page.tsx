@@ -280,7 +280,6 @@ const Page = ({ params }: UserPageProps) => {
         <div className="flex flex-row items-center gap-4">
           {isSuccess && hasStreaks ? (
             userStreaks.map((streak) => {
-              const today = new Date();
               const completedToday = streaksCompletedToday[streak.id];
 
               return userOwnsPage ? (
