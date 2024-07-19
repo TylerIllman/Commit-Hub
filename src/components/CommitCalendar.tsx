@@ -38,7 +38,7 @@ const CommitCalendar: React.FC<CommitCalendarProps> = ({ values }) => {
           return `color-github-${value.count}`;
         }}
         tooltipDataAttrs={(value: CalendarValue | null) => {
-          if (!value.date) {
+          if (!value?.date) {
             return {};
           }
           return {
