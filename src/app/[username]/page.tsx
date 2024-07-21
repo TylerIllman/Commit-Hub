@@ -226,19 +226,26 @@ const Page = ({ params }: UserPageProps) => {
 
   return (
     <div className="flex w-full max-w-[1400px] flex-col">
-      <div className="flex w-full justify-start gap-2">
+      <div className="flex w-full justify-start gap-2 md:mb-2">
         <div className="flex flex-col">
-          <div className="flex flex-row items-center gap-4">
-            <h1 className="whitespace-nowrap text-8xl font-bold">
+          <div className="mb-2 flex flex-row items-center gap-4">
+            <h1 className="mb-1 whitespace-nowrap text-5xl font-bold md:text-6xl lg:text-8xl">
               {userQuery.data.user.firstName} {userQuery.data.user.lastName}
             </h1>
+            <Share
+              onClick={() => {
+                //TODO: Change base url to dynamic base url
+                copy(`commit-hub.com/${username}`)
+                  .then(() => console.log("text copied"))
+                  .catch((err) => console.log(err));
+              }}
+              className="text-l flex cursor-pointer flex-row flex-nowrap whitespace-nowrap text-blue-600 hover:text-blue-400 md:hidden lg:text-xl"
+            />
           </div>
-
-          <div className="p-1"></div>
 
           <div className="flex flex-row items-end gap-4">
             <div
-              className="flex cursor-pointer flex-row flex-nowrap whitespace-nowrap text-xl text-blue-600 hover:text-blue-400"
+              className="text-l hidden cursor-pointer flex-row flex-nowrap whitespace-nowrap text-blue-600 hover:text-blue-400 md:flex lg:text-xl"
               onClick={() => {
                 //TODO: Change base url to dynamic base url
                 copy(`commit-hub.com/${username}`)
@@ -247,109 +254,112 @@ const Page = ({ params }: UserPageProps) => {
               }}
             >
               <span>@{userQuery.data.user.userName}</span>
-              <div className="p-1"></div>
-              <Share />
+              <Share className="ml-1 h-5 w-5 md:ml-2" />
             </div>
             {userQuery.data.user.createdAt && (
-              <span className="flex whitespace-nowrap text-xl text-muted-foreground">
+              <span className="md:text-l hidden whitespace-nowrap text-sm text-muted-foreground md:flex lg:text-xl">
                 {/* HACK: Force casting the type of this to a Date (Should be ok due database structure) */}
                 Joined: {formatDate(userQuery.data.user.createdAt)}
               </span>
             )}
-            <span className="whitespace-nowrap text-xl text-muted-foreground">
+            <span className="hidden whitespace-nowrap text-muted-foreground md:flex lg:text-xl">
               Longest Streak: {longestSteak}
             </span>
           </div>
-
-          {/* <div className="p-2"></div> */}
         </div>
 
-        <div className="flex w-full justify-end">
+        <div className="hidden w-full justify-end md:flex">
           <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center">
-            <span className="text-text-400 text-xl">Streak Completions</span>
-            <span className="flex text-6xl font-bold">
+            <span className="text-text-400 md:text-xl">Streak Completions</span>
+            <span className="flex font-bold md:text-6xl">
               🔥 {totalNumCompletions}
             </span>
           </div>
         </div>
-        <div className=" flex w-full justify-center">
-          <div className="flex flex-col items-center justify-center gap-2 rounded-lg  p-6 text-center">
-            <span className="text-text-400 text-xl">Completed Today</span>
+        <div className="hidden w-full justify-center md:flex">
+          <div className="flex flex-col items-center justify-center gap-2 rounded-lg text-center md:p-6">
+            <span className="text-text-400 md:text-xl">Completed Today</span>
 
-            <span className="flex text-6xl font-bold">
+            <span className="flex font-bold md:text-6xl">
               ✅ {completedTodayCount}
             </span>
           </div>
         </div>
       </div>
       {/* TODO: Check this styling for when a user has no streaks */}
-      <div className="p-2"></div>
-      <div className="flex flex-row items-center gap-4">
-        <div className="flex flex-row items-center gap-4">
-          {isSuccess && hasStreaks ? (
-            userStreaks.map((streak) => {
-              const completedToday = streaksCompletedToday[streak.id];
+      {/* <div className="p-2"></div> */}
+      {/* <div className="flex flex-row items-center gap-4"> */}
+      <div className="mb-2 flex flex-row items-center gap-4 md:mb-4">
+        {isSuccess && hasStreaks ? (
+          userStreaks.map((streak) => {
+            const completedToday = streaksCompletedToday[streak.id];
 
-              return userOwnsPage ? (
-                <Button
-                  key={`streakbutton-${streak.id}`}
-                  size="toggleIcon"
-                  variant={
-                    completedToday ? "toggleIconActive" : "toggleIconInactive"
-                  }
-                  onClick={() =>
-                    handleStreakCompletion(streak.id, streak.completions)
-                  }
-                  disabled={streakCompletionLoading}
-                >
-                  {streak.emoji}
-                </Button>
-              ) : (
-                <div
-                  key={`streakview-${streak.id}`}
-                  className={cn(
-                    "flex h-24 w-24 cursor-default select-none items-center justify-center rounded-full border bg-card text-6xl",
-                    { "bg-primary": completedToday },
-                  )}
-                >
-                  {streak.emoji}
-                </div>
-              );
-            })
-          ) : (
-            <div>No streaks found</div>
-          )}
-        </div>
+            return userOwnsPage ? (
+              <Button
+                className="h-16 w-16 text-3xl md:h-24 md:w-24 md:text-6xl"
+                key={`streakbutton-${streak.id}`}
+                // size="toggleIcon"
+                variant={
+                  completedToday ? "toggleIconActive" : "toggleIconInactive"
+                }
+                onClick={() =>
+                  handleStreakCompletion(streak.id, streak.completions)
+                }
+                disabled={streakCompletionLoading}
+              >
+                {streak.emoji}
+              </Button>
+            ) : (
+              <div
+                key={`streakview-${streak.id}`}
+                className={cn(
+                  "mb-2 flex h-24 w-24 cursor-default select-none items-center justify-center rounded-full border bg-card lg:text-6xl",
+                  { "bg-primary": completedToday },
+                )}
+              >
+                {streak.emoji}
+              </div>
+            );
+          })
+        ) : (
+          <div>No streaks found</div>
+        )}
       </div>
-      <div className="p-4"></div>
+      {/* </div> */}
+      {/* <div className="p-4"></div> */}
       {isSuccess && hasStreaks ? (
         //TODO: Add link and description rendering
-        <Card>
-          <div className="p-6">
-            {/* HACK: Add default [] to fix linting error. May cause problems */}
-            <CommitCalendar values={masterStreak ?? []} />
-          </div>
-        </Card>
+        <>
+          <Card className="p-3 lg:p-6">
+            <div>
+              {/* HACK: Add default [] to fix linting error. May cause problems */}
+              <CommitCalendar values={masterStreak ?? []} />
+            </div>
+          </Card>
+
+          <div className="my-3 h-px w-full bg-gray-300 md:my-5" />
+        </>
       ) : (
         <div>loading</div>
       )}
-      <div className="p-4"></div>
+
+      {/* <div className="p-4"></div> */}
       {isSuccess && hasStreaks ? (
         //TODO: Add the ability to edit and delete streaks
         userStreaks.map((streak) => (
           <div key={`commitCal-${streak.id}`}>
-            <Card>
-              <div className="p-6">
+            <Card className="mb-3 md:mb-5">
+              <div className="p-3 md:p-6">
                 <div className="flex flex-row items-center justify-between pb-2">
                   <div className="flex flex-row items-center">
-                    <h2 className=" text-5xl font-bold md:text-4xl">
+                    <h2 className="mr-2 text-xl font-bold md:mr-4 md:text-4xl lg:text-5xl">
                       {streak.emoji} {streak.name}
                     </h2>
-                    <div className="p-2"></div>
+                    {/* <div className="p-2"></div> */}
                     {/* TODO: Convert this compoent into Shadcn button link variant */}
                     {streak.url && (
                       <ExternalLink
-                        className="text-blue-600 hover:cursor-pointer hover:text-blue-400"
+                        className="h-5 w-5 text-blue-600 hover:cursor-pointer hover:text-blue-400 md:h-8 md:w-8"
                         onClick={() => {
                           //HACK: Need to have proper error handling for:
                           if (!streak.url) {
@@ -363,7 +373,7 @@ const Page = ({ params }: UserPageProps) => {
                   </div>
                   {userOwnsPage && (
                     <Settings
-                      className="h-8 w-8 text-muted-foreground hover:cursor-pointer hover:text-blue-400"
+                      className="h-5 w-5 text-muted-foreground hover:cursor-pointer hover:text-blue-400 md:h-8 md:w-8"
                       onClick={() => {
                         console.log("settings clicked: ", streak.id);
                         onOpen("editStreakSettings", {
@@ -379,11 +389,11 @@ const Page = ({ params }: UserPageProps) => {
                   )}
                 </div>
                 <p className="text-muted-foreground">{streak.description}</p>
-                <div className="p-2"></div>
+                {/* <div className="p-2"></div> */}
                 <CommitCalendar values={streak.completions} />
               </div>
             </Card>
-            <div className="p-4"></div>
+            {/* <div className="p-4"></div> */}
           </div>
         ))
       ) : (

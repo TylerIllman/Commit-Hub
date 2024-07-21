@@ -26,7 +26,7 @@ const CommitCalendar: React.FC<CommitCalendarProps> = ({ values }) => {
   // });
   // Example data
   return (
-    <>
+    <div style={{ overflowX: "auto" }}>
       <CalendarHeatmap
         startDate={shiftDate(today, -365)}
         endDate={today}
@@ -49,7 +49,7 @@ const CommitCalendar: React.FC<CommitCalendarProps> = ({ values }) => {
         }}
       />
       <Tooltip id="daily-tooltip" />
-    </>
+    </div>
   );
 };
 

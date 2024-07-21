@@ -71,13 +71,6 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                     <House className="mr-2 h-7 w-7" /> My Streaks
                   </Link>
                 </li>
-                {/* <li className="my-3 h-px w-full bg-gray-300" /> */}
-                {/* <li> */}
-                {/*   <div className="flex w-full items-center font-semibold"> */}
-                {/*     <UserButton /> */}
-                {/*     <span className="ml-2">My Account</span> */}
-                {/*   </div> */}
-                {/* </li> */}
               </>
             )}
           </ul>
