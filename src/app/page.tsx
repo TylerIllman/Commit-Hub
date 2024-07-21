@@ -9,9 +9,9 @@ import { buttonVariants } from "~/components/ui/button";
 export default function Home() {
   const { user } = useUser();
 
-  if (user?.username) {
-    redirect(`/${user.username}`);
-  }
+  // if (user?.username) {
+  //   redirect(`/${user.username}`);
+  // }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center text-center text-5xl font-bold md:text-6xl lg:text-8xl">
