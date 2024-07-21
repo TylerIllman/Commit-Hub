@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 import { ArrowRight, House, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -59,15 +59,6 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                   </Link>
                 </li>
                 <li className="my-3 h-px w-full bg-gray-300" />
-                <li>
-                  <Link
-                    onClick={() => closeOnCurrent("/pricing")}
-                    className="flex w-full items-center font-semibold"
-                    href="/pricing"
-                  >
-                    Pricing
-                  </Link>
-                </li>
               </>
             ) : (
               <>
@@ -77,9 +68,16 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                     className="flex w-full items-center font-semibold"
                     href={`/${user?.username}`}
                   >
-                    <House className="mr-2 h-5 w-5" /> My Streaks
+                    <House className="mr-2 h-7 w-7" /> My Streaks
                   </Link>
                 </li>
+                {/* <li className="my-3 h-px w-full bg-gray-300" /> */}
+                {/* <li> */}
+                {/*   <div className="flex w-full items-center font-semibold"> */}
+                {/*     <UserButton /> */}
+                {/*     <span className="ml-2">My Account</span> */}
+                {/*   </div> */}
+                {/* </li> */}
               </>
             )}
           </ul>
