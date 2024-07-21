@@ -129,7 +129,7 @@ const Page = ({ params }: UserPageProps) => {
 
   if (!userQuery.isFetched || !activeUser.isLoaded)
     return (
-      <div className="flex items-center justify-center">
+      <div className="m-5 flex items-center justify-center">
         <Loader2 className="h-40 animate-spin" />
       </div>
     );
