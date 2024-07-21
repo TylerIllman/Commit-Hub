@@ -12,8 +12,9 @@ import type { streakWithCompletion } from "~/server/api/routers/user";
 import { useEffect, useState } from "react";
 import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
-import { ExternalLink, Settings, Share } from "lucide-react";
+import { ExternalLink, Loader2, Settings, Share } from "lucide-react";
 import { formatDate } from "~/lib/utils";
+import { Skeleton } from "~/components/ui/skeleton";
 
 interface UserPageProps {
   params: {
@@ -126,7 +127,12 @@ const Page = ({ params }: UserPageProps) => {
     }
   }, [streaksData, isSuccess]);
 
-  if (!userQuery.isFetched || !activeUser.isLoaded) return <div>fetching</div>;
+  if (!userQuery.isFetched || !activeUser.isLoaded)
+    return (
+      <div className="flex items-center justify-center">
+        <Loader2 className="h-24 animate-spin" />
+      </div>
+    );
 
   if (!userQuery.data?.isUser || !userQuery.data.user) {
     return <div>No user</div>;
@@ -322,7 +328,8 @@ const Page = ({ params }: UserPageProps) => {
             );
           })
         ) : (
-          <div>No streaks found</div>
+          //TODO: Have this check if the data has been loaded efore rendering nothing
+          <></>
         )}
       </div>
       {/* </div> */}
@@ -340,7 +347,8 @@ const Page = ({ params }: UserPageProps) => {
           <div className="my-3 h-px w-full bg-gray-300 md:my-5" />
         </>
       ) : (
-        <div>loading</div>
+        //TODO: Have this check if the data has been loaded efore rendering nothing
+        <></>
       )}
 
       {/* <div className="p-4"></div> */}
@@ -397,7 +405,11 @@ const Page = ({ params }: UserPageProps) => {
           </div>
         ))
       ) : (
-        <div>No streaks found</div>
+        //TODO: Have this check if the data has been loaded efore rendering nothing
+        <>
+          <Skeleton className="rounded-full" />
+          <Skeleton className="rounded-full" />
+        </>
       )}
       {userOwnsPage && (
         <div className="flex w-full items-center justify-center">
