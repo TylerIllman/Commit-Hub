@@ -21,9 +21,9 @@ const Navbar = () => {
             <span className="rounded-sm bg-primary px-1.5 py-0.5">hub</span>
           </Link>
 
-          <MobileNav isAuth={!!user} />
+          {/* <MobileNav isAuth={!!user} /> */}
 
-          <div className="hidden items-center space-x-4 sm:flex">
+          <div className="flex items-center space-x-4">
             {!user ? (
               <>
                 <Link
@@ -46,20 +46,6 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                {/* <Button */}
-                {/*   onClick={() => { */}
-                {/*     setTheme("dark"); */}
-                {/*   }} */}
-                {/* > */}
-                {/*   Dark */}
-                {/* </Button> */}
-                {/* <Button */}
-                {/*   onClick={() => { */}
-                {/*     setTheme("light"); */}
-                {/*   }} */}
-                {/* > */}
-                {/*   light */}
-                {/* </Button> */}
                 <Link
                   className={buttonVariants({
                     variant: "ghost",
