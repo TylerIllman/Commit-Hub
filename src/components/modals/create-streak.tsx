@@ -78,7 +78,9 @@ export const CreateStreakModal = () => {
         console.log("init userStreak: ", data.userStreaks);
         if (res.success) {
           //TODO: Fix below linting
-          data.setUserStreaks([...data.userStreaks, res.data]);
+          if (data.setUserStreaks) {
+            data.setUserStreaks((prevStreaks) => [...prevStreaks, res.data]);
+          }
         }
       },
       //TODO: On failure push toaster notifications

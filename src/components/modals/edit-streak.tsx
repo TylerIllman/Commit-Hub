@@ -119,9 +119,11 @@ export const EditStreakModal = () => {
       {
         onSuccess: () => {
           //TODO: Make this actually safe for checks
-          data.setUserStreaks((prevStreaks) =>
-            prevStreaks.filter((streak) => streak.id !== data.streakId),
-          );
+          if (data.setUserStreaks) {
+            data.setUserStreaks((prevStreaks) =>
+              prevStreaks.filter((streak) => streak.id !== data.streakId),
+            );
+          }
         },
       },
     );

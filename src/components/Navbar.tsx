@@ -18,7 +18,7 @@ const Navbar = () => {
         <div className="flex h-14 items-center justify-between border-b border-zinc-200">
           <Link href="/" className="flex font-bold">
             <span className="px-0.5 py-0.5">Commit</span>
-            <span className="rounded-sm bg-primary px-1.5 py-0.5">hub</span>
+            <span className="rounded-sm bg-primary px-1.5 py-0.5">Hub</span>
           </Link>
 
           {/* <MobileNav isAuth={!!user} /> */}
