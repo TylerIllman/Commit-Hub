@@ -72,6 +72,7 @@ const Page = ({ params }: UserPageProps) => {
     api.streaks.addStreakCompletion.useMutation();
 
   const userOwnsPage = activeUser.user?.id == userQuery.data?.user?.id;
+  // const userOwnsPage = true;
 
   const dateStart = new Date();
   dateStart.setHours(0, 0, 0, 0); // Start of today
@@ -130,7 +131,7 @@ const Page = ({ params }: UserPageProps) => {
   if (!userQuery.isFetched || !activeUser.isLoaded)
     return (
       <div className="m-5 flex items-center justify-center">
-        <Loader2 className="h-40 animate-spin" />
+        <Loader2 className="h-20 w-20 animate-spin" />
       </div>
     );
 
@@ -138,10 +139,7 @@ const Page = ({ params }: UserPageProps) => {
     return <div>No user</div>;
   }
 
-  const handleStreakCompletion = (
-    streakId: number,
-    completions: CalendarValue[],
-  ) => {
+  const handleStreakCompletion = (streakId: number) => {
     if (!userStreaks) {
       console.log("no streak");
       return;
@@ -308,9 +306,7 @@ const Page = ({ params }: UserPageProps) => {
                 variant={
                   completedToday ? "toggleIconActive" : "toggleIconInactive"
                 }
-                onClick={() =>
-                  handleStreakCompletion(streak.id, streak.completions)
-                }
+                onClick={() => handleStreakCompletion(streak.id)}
                 disabled={streakCompletionLoading}
               >
                 {streak.emoji}
@@ -319,7 +315,7 @@ const Page = ({ params }: UserPageProps) => {
               <div
                 key={`streakview-${streak.id}`}
                 className={cn(
-                  "mb-2 flex h-24 w-24 cursor-default select-none items-center justify-center rounded-full border bg-card lg:text-6xl",
+                  "mb-2 flex h-16 w-16 cursor-default select-none items-center justify-center rounded-full border bg-card text-3xl sm:h-24 sm:w-24 md:text-6xl lg:text-6xl",
                   { "bg-primary": completedToday },
                 )}
               >
@@ -391,6 +387,8 @@ const Page = ({ params }: UserPageProps) => {
                           //HACK: Default string values for url and description may break
                           streakUrl: streak.url ?? "",
                           streakDescription: streak.description ?? "",
+                          userStreaks,
+                          setUserStreaks,
                         });
                       }}
                     />
@@ -406,7 +404,7 @@ const Page = ({ params }: UserPageProps) => {
         ))
       ) : (
         <div className="flex justify-center align-middle">
-          <Loader2 className="h-40 animate-spin" />
+          <Loader2 className="h-20 w-20 animate-spin" />
         </div>
         //TODO: Have this check if the data has been loaded efore rendering nothing
       )}
@@ -414,7 +412,7 @@ const Page = ({ params }: UserPageProps) => {
         <div className="flex w-full items-center justify-center">
           <Button
             onClick={() => {
-              onOpen("createStreak");
+              onOpen("createStreak", { userStreaks, setUserStreaks });
             }}
             // className="bg-primary-400 max-w-[400px] rounded-lg px-4 py-3 text-center"
           >

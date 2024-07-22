@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { streakWithCompletion } from "~/server/api/routers/user";
 
 export type ModalType = "createStreak" | "editStreakSettings";
 
@@ -9,6 +10,8 @@ interface ModalData {
   streakUrl?: string;
   streakDescription?: string;
   streakId?: number;
+  userStreaks?: streakWithCompletion[];
+  setUserStreaks?: React.Dispatch<React.SetStateAction<streakWithCompletion[]>>;
 }
 
 interface ModalStore {

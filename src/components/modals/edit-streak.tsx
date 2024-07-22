@@ -113,7 +113,18 @@ export const EditStreakModal = () => {
       console.log("ERROR: No streak Id");
       return;
     }
-    deleteStreakMutation.mutate({ streakId: data.streakId });
+
+    deleteStreakMutation.mutate(
+      { streakId: data.streakId },
+      {
+        onSuccess: () => {
+          //TODO: Make this actually safe for checks
+          data.setUserStreaks((prevStreaks) =>
+            prevStreaks.filter((streak) => streak.id !== data.streakId),
+          );
+        },
+      },
+    );
     onClose();
     setShowConfirmation(false);
   };

@@ -7,6 +7,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import { db } from "~/server/db";
+import type { streakWithCompletion } from "~/server/api/routers/user";
 
 // interface StreakType {
 //   name: string;
@@ -61,7 +62,16 @@ export const streaksRouter = createTRPCRouter({
       const res = await db.streak.create({
         data: streakData,
       });
-      return res;
+
+      if (res) {
+        const streakWithComp: streakWithCompletion = {
+          ...res,
+          completions: [],
+        };
+        return { success: true, data: streakWithComp };
+      }
+
+      return { success: false, data: res };
     }),
 
   addStreakCompletion: protectedProcedure

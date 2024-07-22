@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { api } from "~/trpc/react";
+import { streakWithCompletion } from "~/server/api/routers/user";
 
 export const createStreakFormSchema = z.object({
   name: z.string().min(1, { message: "A streak name is required" }),
@@ -71,7 +72,17 @@ export const CreateStreakModal = () => {
       description: values.description != "" ? values.description : undefined,
     };
     console.log(cleanVals);
-    createStreakMutation.mutate(cleanVals);
+    createStreakMutation.mutate(cleanVals, {
+      onSuccess: (res) => {
+        console.log("res: ", res);
+        console.log("init userStreak: ", data.userStreaks);
+        if (res.success) {
+          //TODO: Fix below linting
+          data.setUserStreaks([...data.userStreaks, res.data]);
+        }
+      },
+      //TODO: On failure push toaster notifications
+    });
     handleClose();
   };
 
