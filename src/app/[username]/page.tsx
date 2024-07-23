@@ -155,7 +155,7 @@ const Page = ({ params }: UserPageProps) => {
     //TODO: Convert this to have an indvividual is loading state per button
     setStreakCompletionLoading((prev) => ({
       ...prev,
-      [streakId]: false,
+      [streakId]: true,
     }));
 
     const tempStreaksCompletedToday = streaksCompletedToday;
@@ -237,7 +237,7 @@ const Page = ({ params }: UserPageProps) => {
         onError: () => {
           setStreakCompletionLoading((prev) => ({
             ...prev,
-            [streakId]: true,
+            [streakId]: false,
           }));
           console.log("error updating streak");
         },
