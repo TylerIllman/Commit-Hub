@@ -23,6 +23,7 @@ interface UserPageProps {
 }
 
 type StreaksCompletedTodayType = Record<number, boolean>;
+type StreaksLoadingType = Record<number, boolean>;
 
 const useClipboard = () => {
   const [isCopied, setIsCopied] = useState(false);
@@ -65,7 +66,9 @@ const Page = ({ params }: UserPageProps) => {
   const [currentActiveStreak, setCurrentActiveStreak] = useState(0);
   const [streaksCompletedToday, setStreaksCompletedToday] =
     useState<StreaksCompletedTodayType>({});
-  const [streakCompletionLoading, setStreakCompletionLoading] = useState(false);
+
+  const [streakCompletionLoading, setStreakCompletionLoading] =
+    useState<StreaksLoadingType>({});
   const [totalNumCompletions, setTotalNumCompletions] = useState(0);
 
   const streakCompletionMutation =
@@ -109,8 +112,11 @@ const Page = ({ params }: UserPageProps) => {
         const today = new Date();
         const tempStreaksCompletedToday: StreaksCompletedTodayType = {};
         let countCompleted = 0;
+        const tempStreaksLoading: StreaksLoadingType = {};
 
         streaksData.streaks.forEach((streak: streakWithCompletion) => {
+          tempStreaksLoading[streak.id] = false;
+
           if (
             streak.completions[0] &&
             isSameDay(streak.completions[0].date, today)
@@ -121,6 +127,8 @@ const Page = ({ params }: UserPageProps) => {
             tempStreaksCompletedToday[streak.id] = false;
           }
         });
+
+        setStreakCompletionLoading(tempStreaksLoading);
 
         setCompletedTodayCount(countCompleted);
         setStreaksCompletedToday(tempStreaksCompletedToday);
@@ -145,7 +153,10 @@ const Page = ({ params }: UserPageProps) => {
       return;
     }
     //TODO: Convert this to have an indvividual is loading state per button
-    setStreakCompletionLoading(true);
+    setStreakCompletionLoading((prev) => ({
+      ...prev,
+      [streakId]: false,
+    }));
 
     const tempStreaksCompletedToday = streaksCompletedToday;
 
@@ -218,10 +229,16 @@ const Page = ({ params }: UserPageProps) => {
       },
       {
         onSuccess: () => {
-          setStreakCompletionLoading(false);
+          setStreakCompletionLoading((prev) => ({
+            ...prev,
+            [streakId]: false,
+          }));
         },
         onError: () => {
-          setStreakCompletionLoading(false);
+          setStreakCompletionLoading((prev) => ({
+            ...prev,
+            [streakId]: true,
+          }));
           console.log("error updating streak");
         },
       },
@@ -230,7 +247,7 @@ const Page = ({ params }: UserPageProps) => {
 
   return (
     <div className="flex w-full max-w-[1400px] flex-col">
-      <div className="flex w-full justify-start gap-2 md:mb-2">
+      <div className="flex w-full justify-start gap-2 md:mb-4">
         <div className="flex flex-col">
           <div className="mb-2 flex flex-row items-center gap-4">
             <h1 className="mb-1 whitespace-nowrap text-5xl font-bold md:text-6xl lg:text-8xl">
@@ -249,7 +266,7 @@ const Page = ({ params }: UserPageProps) => {
 
           <div className="flex flex-row items-end gap-4">
             <div
-              className="text-l hidden cursor-pointer flex-row flex-nowrap whitespace-nowrap text-blue-600 hover:text-blue-400 md:flex lg:text-xl"
+              className="text-l hidden cursor-pointer flex-row flex-nowrap items-center justify-center whitespace-nowrap text-blue-600 hover:text-blue-400 md:flex lg:text-xl"
               onClick={() => {
                 //TODO: Change base url to dynamic base url
                 copy(`commit-hub.com/${username}`)
@@ -290,6 +307,7 @@ const Page = ({ params }: UserPageProps) => {
           </div>
         </div>
       </div>
+
       {/* TODO: Check this styling for when a user has no streaks */}
       {/* <div className="p-2"></div> */}
       {/* <div className="flex flex-row items-center gap-4"> */}
@@ -307,7 +325,7 @@ const Page = ({ params }: UserPageProps) => {
                   completedToday ? "toggleIconActive" : "toggleIconInactive"
                 }
                 onClick={() => handleStreakCompletion(streak.id)}
-                disabled={streakCompletionLoading}
+                disabled={streakCompletionLoading[streak.id]}
               >
                 {streak.emoji}
               </Button>
@@ -352,7 +370,7 @@ const Page = ({ params }: UserPageProps) => {
         //TODO: Add the ability to edit and delete streaks
         userStreaks.map((streak) => (
           <div key={`commitCal-${streak.id}`}>
-            <Card className="mb-3 md:mb-5">
+            <Card className="mb-3 md:mb-6">
               <div className="p-3 md:p-6">
                 <div className="flex flex-row items-center justify-between pb-2">
                   <div className="flex flex-row items-center">
@@ -404,7 +422,7 @@ const Page = ({ params }: UserPageProps) => {
         ))
       ) : (
         <div className="flex justify-center align-middle">
-          <Loader2 className="h-20 w-20 animate-spin" />
+          <Loader2 className="m-6 h-20 w-20 animate-spin" />
         </div>
         //TODO: Have this check if the data has been loaded efore rendering nothing
       )}
@@ -416,6 +434,7 @@ const Page = ({ params }: UserPageProps) => {
             }}
             // className="bg-primary-400 max-w-[400px] rounded-lg px-4 py-3 text-center"
           >
+            {/* TODO: Stop this button from rendering while loading */}
             Add New Streak
           </Button>
         </div>
