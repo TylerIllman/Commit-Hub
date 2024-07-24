@@ -139,7 +139,7 @@ const Page = ({ params }: UserPageProps) => {
   if (!userQuery.isFetched || !activeUser.isLoaded)
     return (
       <div className="m-5 flex items-center justify-center">
-        <Loader2 className="h-20 w-20 animate-spin" />
+        <Loader2 className="h-20 w-20 animate-spin text-primary" />
       </div>
     );
 
@@ -422,7 +422,7 @@ const Page = ({ params }: UserPageProps) => {
         ))
       ) : (
         <div className="flex justify-center align-middle">
-          <Loader2 className="m-6 h-20 w-20 animate-spin" />
+          <Loader2 className="m-6 h-20 w-20 animate-spin text-primary" />
         </div>
         //TODO: Have this check if the data has been loaded efore rendering nothing
       )}
