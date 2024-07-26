@@ -271,9 +271,9 @@ const Page = ({ params }: UserPageProps) => {
                 if (navigator.share) {
                   navigator
                     .share({
-                      title: "Check this out!",
-                      text: "I found this interesting: ",
-                      url: `commit-hub.com/${username}`,
+                      title: "Checkout My CommitHub",
+                      text: "Help me stay committed to my daily streaks on CommitHub",
+                      url: `https://commithub.tyleri.dev/${username}`,
                     })
                     .then(() => {
                       console.log("Modal Openend");
@@ -343,7 +343,7 @@ const Page = ({ params }: UserPageProps) => {
       {/* TODO: Check this styling for when a user has no streaks */}
       {/* <div className="p-2"></div> */}
       {/* <div className="flex flex-row items-center gap-4"> */}
-      <div className="mb-2 flex flex-row items-center gap-4 md:mb-4">
+      <div className="mb-2 flex flex-row items-center gap-4 overflow-x-scroll md:mb-4">
         {isSuccess && hasStreaks ? (
           userStreaks.map((streak) => {
             const completedToday = streaksCompletedToday[streak.id];
