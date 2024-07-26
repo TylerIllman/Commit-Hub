@@ -14,7 +14,6 @@ import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
 import { ExternalLink, Loader2, Settings, Share } from "lucide-react";
 import { formatDate } from "~/lib/utils";
-import { Skeleton } from "~/components/ui/skeleton";
 
 interface UserPageProps {
   params: {
@@ -283,9 +282,9 @@ const Page = ({ params }: UserPageProps) => {
                 Joined: {formatDate(userQuery.data.user.createdAt)}
               </span>
             )}
-            <span className="hidden whitespace-nowrap text-muted-foreground md:flex lg:text-xl">
-              Longest Streak: {longestSteak}
-            </span>
+            {/* <span className="hidden whitespace-nowrap text-muted-foreground md:flex lg:text-xl"> */}
+            {/*   Longest Streak: {longestSteak} */}
+            {/* </span> */}
           </div>
         </div>
 
@@ -308,6 +307,24 @@ const Page = ({ params }: UserPageProps) => {
         </div>
       </div>
 
+      <div className="mb-3 flex flex-row justify-around md:hidden">
+        <div className="flex flex-col items-center text-center">
+          <span className="text-md mb-1 text-muted-foreground">
+            Streak Completions
+          </span>
+          <span className="flex text-4xl font-bold">
+            🔥 {totalNumCompletions}
+          </span>
+        </div>
+        <div className="flex flex-col items-center text-center">
+          <span className="text-md mb-1 text-muted-foreground">
+            Completed Today
+          </span>
+          <span className="flex text-4xl font-bold">
+            ✅ {completedTodayCount}
+          </span>
+        </div>
+      </div>
       {/* TODO: Check this styling for when a user has no streaks */}
       {/* <div className="p-2"></div> */}
       {/* <div className="flex flex-row items-center gap-4"> */}
@@ -318,7 +335,7 @@ const Page = ({ params }: UserPageProps) => {
 
             return userOwnsPage ? (
               <Button
-                className="h-16 w-16 text-3xl md:h-24 md:w-24 md:text-6xl"
+                className="h-20 w-20 text-5xl md:h-24 md:w-24 md:text-6xl"
                 key={`streakbutton-${streak.id}`}
                 // size="toggleIcon"
                 variant={
@@ -333,7 +350,7 @@ const Page = ({ params }: UserPageProps) => {
               <div
                 key={`streakview-${streak.id}`}
                 className={cn(
-                  "mb-2 flex h-16 w-16 cursor-default select-none items-center justify-center rounded-full border bg-card text-3xl sm:h-24 sm:w-24 md:text-6xl lg:text-6xl",
+                  "mb-2 flex h-20 w-20 cursor-default select-none items-center justify-center rounded-full border bg-card text-5xl sm:h-24 sm:w-24 md:text-6xl lg:text-6xl",
                   { "bg-primary": completedToday },
                 )}
               >
