@@ -7,7 +7,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ModalProvider } from "~/components/providers/modal-provider";
 import Navbar from "~/components/Navbar";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider, useTheme } from "next-themes";
 
 export const metadata = {
   title: "Commithub",
@@ -20,17 +20,20 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const { setTheme } = useTheme();
+  // setTheme("light");
+
   return (
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
-          <ThemeProvider>
-            <TRPCReactProvider>
-              <ModalProvider />
-              <Navbar />
-              {children}
-            </TRPCReactProvider>
-          </ThemeProvider>
+          {/* <ThemeProvider> */}
+          <TRPCReactProvider>
+            <ModalProvider />
+            <Navbar />
+            {children}
+          </TRPCReactProvider>
+          {/* </ThemeProvider> */}
         </body>
       </html>
     </ClerkProvider>

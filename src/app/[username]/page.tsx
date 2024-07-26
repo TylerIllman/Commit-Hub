@@ -268,24 +268,24 @@ const Page = ({ params }: UserPageProps) => {
               className="text-l hidden cursor-pointer flex-row flex-nowrap items-center justify-center whitespace-nowrap text-blue-600 hover:text-blue-400 md:flex lg:text-xl"
               onClick={() => {
                 //TODO: Change base url to dynamic base url
-                if (navigator.share) {
-                  navigator
-                    .share({
-                      title: "Checkout My CommitHub",
-                      text: "Help me stay committed to my daily streaks on CommitHub",
-                      url: `https://commithub.tyleri.dev/${username}`,
-                    })
-                    .then(() => {
-                      console.log("Modal Openend");
-                    })
-                    .catch((error) => {
-                      console.log("Error sharing:", error);
-                    });
-                } else {
-                  copy(`commit-hub.com/${username}`)
-                    .then(() => console.log("text copied"))
-                    .catch((err) => console.log(err));
-                }
+                // if (navigator.canShare()) {
+                navigator
+                  .share({
+                    title: "Checkout My CommitHub",
+                    text: "Help me stay committed to my daily streaks on CommitHub",
+                    url: `https://commithub.tyleri.dev/${username}`,
+                  })
+                  .then(() => {
+                    console.log("Modal Openend");
+                  })
+                  .catch((error) => {
+                    console.log("Error sharing:", error);
+                  });
+                // } else {
+                //   copy(`commit-hub.com/${username}`)
+                //     .then(() => console.log("text copied"))
+                //     .catch((err) => console.log(err));
+                // }
               }}
             >
               <span>@{userQuery.data.user.userName}</span>
