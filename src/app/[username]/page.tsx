@@ -249,7 +249,7 @@ const Page = ({ params }: UserPageProps) => {
       <div className="flex w-full justify-start gap-2 md:mb-4">
         <div className="flex flex-col">
           <div className="mb-2 flex flex-row items-center gap-4">
-            <h1 className="mb-1 whitespace-nowrap text-5xl font-bold md:text-6xl lg:text-8xl">
+            <h1 className="mb-1 whitespace-nowrap text-6xl font-bold md:text-7xl lg:text-8xl">
               {userQuery.data.user.firstName} {userQuery.data.user.lastName}
             </h1>
             <Share
@@ -268,9 +268,24 @@ const Page = ({ params }: UserPageProps) => {
               className="text-l hidden cursor-pointer flex-row flex-nowrap items-center justify-center whitespace-nowrap text-blue-600 hover:text-blue-400 md:flex lg:text-xl"
               onClick={() => {
                 //TODO: Change base url to dynamic base url
-                copy(`commit-hub.com/${username}`)
-                  .then(() => console.log("text copied"))
-                  .catch((err) => console.log(err));
+                if (navigator.share) {
+                  navigator
+                    .share({
+                      title: "Check this out!",
+                      text: "I found this interesting: ",
+                      url: `commit-hub.com/${username}`,
+                    })
+                    .then(() => {
+                      console.log("Modal Openend");
+                    })
+                    .catch((error) => {
+                      console.log("Error sharing:", error);
+                    });
+                } else {
+                  copy(`commit-hub.com/${username}`)
+                    .then(() => console.log("text copied"))
+                    .catch((err) => console.log(err));
+                }
               }}
             >
               <span>@{userQuery.data.user.userName}</span>
