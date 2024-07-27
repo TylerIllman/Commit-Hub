@@ -92,7 +92,7 @@ export const CreateStreakModal = () => {
     form.reset();
     onClose();
   };
-
+  //TODO: Dark mode styling for modals
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
       <DialogContent className="overflow-hidden bg-white p-0 text-black">
@@ -110,7 +110,7 @@ export const CreateStreakModal = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
                       Streak name *
                     </FormLabel>
                     <FormControl>
@@ -131,7 +131,7 @@ export const CreateStreakModal = () => {
                 name="emoji"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
                       Emoji *
                     </FormLabel>
                     <FormControl>
@@ -152,7 +152,7 @@ export const CreateStreakModal = () => {
                 name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
                       Url
                     </FormLabel>
                     <FormControl>
@@ -173,7 +173,7 @@ export const CreateStreakModal = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 dark:text-secondary/70">
+                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
                       Description
                     </FormLabel>
                     <FormControl>
