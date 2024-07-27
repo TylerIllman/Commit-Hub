@@ -254,7 +254,7 @@ const Page = ({ params }: UserPageProps) => {
             </h1>
             <Share
               onClick={() => {
-                //TODO: Change base url to dynamic base url
+                //TODO: convert nav.share to it's own async func
                 if (navigator.share) {
                   navigator
                     .share({
@@ -282,7 +282,7 @@ const Page = ({ params }: UserPageProps) => {
             <div
               className="text-l hidden cursor-pointer flex-row flex-nowrap items-center justify-center whitespace-nowrap text-blue-600 hover:text-blue-400 md:flex lg:text-xl"
               onClick={() => {
-                //TODO: Change base url to dynamic base url
+                //TODO: convert nav.share to it's own async func
                 if (navigator.share) {
                   navigator
                     .share({

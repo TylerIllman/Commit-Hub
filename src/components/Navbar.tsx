@@ -7,13 +7,14 @@ import MobileNav from "./mobileNav";
 import { Button, buttonVariants } from "./ui/button";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { useTheme } from "next-themes";
+import ThemeSwitch from "./ThemeSwitch";
 
 const Navbar = () => {
   const { user } = useUser();
   const { setTheme } = useTheme();
 
   return (
-    <nav className="sticky inset-x-0 top-0 z-30 h-14 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all">
+    <nav className="sticky inset-x-0 top-0 z-30 h-14 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all dark:bg-background">
       <MaxWidthWrapper>
         <div className="flex h-14 items-center justify-between border-b border-zinc-200">
           <Link href="/" className="flex font-bold">
@@ -24,6 +25,7 @@ const Navbar = () => {
           {/* <MobileNav isAuth={!!user} /> */}
 
           <div className="flex items-center space-x-4">
+            <ThemeSwitch />
             {!user ? (
               <>
                 <Link
