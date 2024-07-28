@@ -95,7 +95,7 @@ export const CreateStreakModal = () => {
   //TODO: Dark mode styling for modals
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="overflow-hidden bg-white p-0 text-black">
+      <DialogContent className="overflow-hidden p-0">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             Create A New Streak
@@ -110,13 +110,13 @@ export const CreateStreakModal = () => {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
+                    <FormLabel className="text-xs font-bold uppercase">
                       Streak name *
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="Enter the streak name"
                         {...field}
                       />
@@ -131,13 +131,13 @@ export const CreateStreakModal = () => {
                 name="emoji"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
+                    <FormLabel className="text-xs font-bold uppercase">
                       Emoji *
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="Add an Emoji to represent this streak"
                         {...field}
                       />
@@ -152,13 +152,13 @@ export const CreateStreakModal = () => {
                 name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
+                    <FormLabel className="text-xs font-bold uppercase ">
                       Url
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="Enter a URL"
                         {...field}
                       />
@@ -173,13 +173,13 @@ export const CreateStreakModal = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-bold uppercase text-zinc-500 ">
+                    <FormLabel className="text-xs font-bold uppercase ">
                       Description
                     </FormLabel>
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 bg-zinc-300/50 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                         placeholder="Enter a short description"
                         {...field}
                       />
@@ -189,7 +189,7 @@ export const CreateStreakModal = () => {
                 )}
               />
             </div>
-            <DialogFooter className="bg-gray-100 px-6 py-4">
+            <DialogFooter className=" px-6 py-4">
               <Button disabled={isLoading}>Create New Streak</Button>
             </DialogFooter>
           </form>
