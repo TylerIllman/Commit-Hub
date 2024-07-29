@@ -133,7 +133,7 @@ export const EditStreakModal = () => {
 
   return (
     <Dialog open={isModalOpen} onOpenChange={handleClose}>
-      <DialogContent className="overflow-hidden p-0">
+      <DialogContent className="overflow-hidden p-0 dark:bg-background">
         <DialogHeader className="px-6 pt-8">
           <DialogTitle className="text-center text-2xl font-bold">
             Edit Streak
@@ -154,7 +154,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Enter the streak name"
                         {...field}
                       />
@@ -175,7 +175,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Add an Emoji to represent this streak"
                         {...field}
                       />
@@ -196,7 +196,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Enter a URL"
                         {...field}
                       />
@@ -217,7 +217,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Enter a short description"
                         {...field}
                       />
@@ -246,7 +246,7 @@ export const EditStreakModal = () => {
       {/* Confirmation Modal */}
       {showConfirmation && (
         <Dialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-          <DialogContent>
+          <DialogContent className="dark:bg-background">
             <DialogTitle>
               Are you sure you want to delete this streak?
             </DialogTitle>
