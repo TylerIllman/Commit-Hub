@@ -25,7 +25,7 @@ export default function RootLayout({
       <html lang="en" className={`${GeistSans.variable}`}>
         <body>
           <ThemeProvider
-            enableSystem={true}
+            // enableSystem={true}
             defaultTheme="light"
             attribute="class"
           >
