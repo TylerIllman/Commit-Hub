@@ -228,16 +228,19 @@ export const EditStreakModal = () => {
               />
             </div>
             <DialogFooter className="px-6 py-4">
-              <Button
-                onClick={handleDeleteClick}
-                disabled={isLoading}
-                variant="destructive"
-              >
-                Delete Streak
-              </Button>
-              <Button className="mb-2 sm:mb-0" disabled={isLoading}>
-                Update Streak Details
-              </Button>
+              <div className="flex w-full flex-col space-y-2">
+                <Button className="mb-2 w-full sm:mb-0" disabled={isLoading}>
+                  Update Streak Details
+                </Button>
+                <Button
+                  className="w-full text-red-400"
+                  onClick={handleDeleteClick}
+                  disabled={isLoading}
+                  variant="link"
+                >
+                  Delete Streak
+                </Button>
+              </div>
             </DialogFooter>
           </form>
         </Form>

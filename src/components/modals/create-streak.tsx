@@ -190,7 +190,9 @@ export const CreateStreakModal = () => {
               />
             </div>
             <DialogFooter className=" px-6 py-4">
-              <Button disabled={isLoading}>Create New Streak</Button>
+              <Button className="w-full" disabled={isLoading}>
+                Create New Streak
+              </Button>
             </DialogFooter>
           </form>
         </Form>
