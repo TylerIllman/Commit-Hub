@@ -9,6 +9,7 @@ import { buttonVariants } from "~/components/ui/button";
 export default function Home() {
   const { user } = useUser();
 
+  //TODO: Change this to a prop in the clerk siginin that takes to a redirect page that just redirects to user account page
   if (user?.username) {
     redirect(`/${user.username}`);
   }
@@ -33,6 +34,7 @@ export default function Home() {
         Get Started <ArrowRight className="ml-2 h-5 w-5" />
       </Link>
       {/* HACK: Janky work around to centre on screen */}
+      {/* TODO: Fix full screen wrapper to account for navbar */}
       <div className="pb-[80px]"></div>
     </main>
   );

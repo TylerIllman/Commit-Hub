@@ -358,7 +358,7 @@ const Page = ({ params }: UserPageProps) => {
       {/* TODO: Check this styling for when a user has no streaks */}
       {/* <div className="p-2"></div> */}
       {/* <div className="flex flex-row items-center gap-4"> */}
-      <div className="mb-2 flex flex-row items-center gap-4 overflow-x-scroll md:mb-4">
+      <div className="mb-2 flex flex-row items-center gap-4 overflow-x-auto md:mb-4">
         {isSuccess && hasStreaks ? (
           userStreaks.map((streak) => {
             const completedToday = streaksCompletedToday[streak.id];
@@ -380,7 +380,7 @@ const Page = ({ params }: UserPageProps) => {
               <div
                 key={`streakview-${streak.id}`}
                 className={cn(
-                  "mb-2 flex h-20 w-20 cursor-default select-none items-center justify-center rounded-full border bg-card text-5xl sm:h-24 sm:w-24 md:text-6xl lg:text-6xl",
+                  "mb-2 flex h-20 w-20 flex-shrink-0 cursor-default select-none items-center justify-center rounded-full border bg-card text-5xl sm:h-24 sm:w-24 md:text-6xl lg:text-6xl",
                   { "bg-primary": completedToday },
                 )}
               >
