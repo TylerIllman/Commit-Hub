@@ -12,7 +12,14 @@ import type { streakWithCompletion } from "~/server/api/routers/user";
 import { useEffect, useState } from "react";
 import type { CalendarValue } from "~/server/api/routers/user";
 import { isSameDay } from "~/lib/utils";
-import { ExternalLink, Loader2, Settings, Share } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ExternalLink,
+  Loader2,
+  Settings,
+  Share,
+} from "lucide-react";
 import { formatDate } from "~/lib/utils";
 
 interface UserPageProps {
@@ -135,6 +142,14 @@ const Page = ({ params }: UserPageProps) => {
     }
   }, [streaksData, isSuccess]);
 
+  // const scrollRef = useRef(null);
+  //
+  // useEffect(() => {
+  //   if (scrollRef.current) {
+  //     scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+  //   }
+  // }, []);
+
   if (!userQuery.isFetched || !activeUser.isLoaded)
     return (
       <div className="m-5 flex items-center justify-center">
@@ -243,6 +258,8 @@ const Page = ({ params }: UserPageProps) => {
       },
     );
   };
+
+  console.log(userStreaks.length);
 
   return (
     <div className="flex w-full max-w-[1400px] flex-col">
@@ -355,6 +372,7 @@ const Page = ({ params }: UserPageProps) => {
           </span>
         </div>
       </div>
+
       {/* TODO: Check this styling for when a user has no streaks */}
       {/* <div className="p-2"></div> */}
       {/* <div className="flex flex-row items-center gap-4"> */}
@@ -392,14 +410,24 @@ const Page = ({ params }: UserPageProps) => {
           //TODO: Have this check if the data has been loaded efore rendering nothing
           <></>
         )}
+        {userStreaks.length == 1 && totalNumCompletions == 1 ? (
+          <>
+            <ArrowLeft className="animate-pulse text-xl" />
+            <div className="text-xl">
+              Mark {userStreaks[0]?.name} complete ✅
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
       {/* </div> */}
       {/* <div className="p-4"></div> */}
       {isSuccess && hasStreaks ? (
         //TODO: Add link and description rendering
         <>
-          <Card className="p-3 lg:p-6">
-            <div>
+          <Card className="overflow-x-auto p-3 lg:p-6">
+            <div className="min-w-[800px]">
               {/* HACK: Add default [] to fix linting error. May cause problems */}
               <CommitCalendar values={masterStreak ?? []} />
             </div>
@@ -461,7 +489,9 @@ const Page = ({ params }: UserPageProps) => {
                 </div>
                 <p className="text-muted-foreground">{streak.description}</p>
                 {/* <div className="p-2"></div> */}
+                {/* <div className="min-w-[800px] overflow-x-auto"> */}
                 <CommitCalendar values={streak.completions} />
+                {/* </div> */}
               </div>
             </Card>
             {/* <div className="p-4"></div> */}

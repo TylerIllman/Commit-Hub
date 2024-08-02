@@ -10,9 +10,10 @@ export default function Home() {
   const { user } = useUser();
 
   //TODO: Change this to a prop in the clerk siginin that takes to a redirect page that just redirects to user account page
-  if (user?.username) {
-    redirect(`/${user.username}`);
-  }
+  //ALSO: Need to fix edge case where when a user signs up they get error on redirect due them not exisitng in DB yet
+  // if (user?.username) {
+  //   redirect(`/${user.username}`);
+  // }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center text-center text-5xl font-bold md:text-6xl lg:text-8xl">
