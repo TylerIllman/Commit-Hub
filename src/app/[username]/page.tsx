@@ -410,7 +410,7 @@ const Page = ({ params }: UserPageProps) => {
           //TODO: Have this check if the data has been loaded efore rendering nothing
           <></>
         )}
-        {userStreaks.length == 1 && totalNumCompletions == 1 ? (
+        {userStreaks.length == 1 && totalNumCompletions == 0 ? (
           <>
             <ArrowLeft className="animate-pulse text-xl" />
             <div className="text-xl">
