@@ -426,10 +426,12 @@ const Page = ({ params }: UserPageProps) => {
       {isSuccess && hasStreaks ? (
         //TODO: Add link and description rendering
         <>
-          <Card className="overflow-x-auto p-3 lg:p-6">
-            <div className="min-w-[800px]">
-              {/* HACK: Add default [] to fix linting error. May cause problems */}
-              <CommitCalendar values={masterStreak ?? []} />
+          <Card className="p-3 lg:p-6">
+            <div className="flex flex-grow flex-row-reverse overflow-x-auto">
+              <div className="w-full min-w-[800px]">
+                {/* HACK: Add default [] to fix linting error. May cause problems */}
+                <CommitCalendar values={masterStreak ?? []} />
+              </div>
             </div>
           </Card>
 
@@ -442,14 +444,13 @@ const Page = ({ params }: UserPageProps) => {
 
       {/* <div className="p-4"></div> */}
       {isSuccess && hasStreaks ? (
-        //TODO: Add the ability to edit and delete streaks
         userStreaks.map((streak) => (
           <div key={`commitCal-${streak.id}`}>
             <Card className="mb-3 md:mb-6">
               <div className="p-3 md:p-6">
-                <div className="flex flex-row items-center justify-between pb-2">
-                  <div className="flex flex-row items-center">
-                    <h2 className="mr-2 text-xl font-bold md:mr-4 md:text-4xl lg:text-5xl">
+                <div className="flex flex-row items-center justify-between pb-2 sm:pb-4">
+                  <div className="flex flex-row items-center gap-2">
+                    <h2 className="text-wrap text-2xl font-bold md:mr-4 md:text-4xl lg:text-5xl">
                       {streak.emoji} {streak.name}
                     </h2>
                     {/* <div className="p-2"></div> */}
@@ -490,8 +491,12 @@ const Page = ({ params }: UserPageProps) => {
                 <p className="text-muted-foreground">{streak.description}</p>
                 {/* <div className="p-2"></div> */}
                 {/* <div className="min-w-[800px] overflow-x-auto"> */}
-                <CommitCalendar values={streak.completions} />
-                {/* </div> */}
+                <div className="flex flex-row-reverse overflow-x-auto">
+                  <div className="w-full min-w-[800px] ">
+                    <CommitCalendar values={streak.completions} />
+                    {/* </div> */}
+                  </div>
+                </div>
               </div>
             </Card>
             {/* <div className="p-4"></div> */}
