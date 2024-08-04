@@ -116,7 +116,7 @@ export const CreateStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
+                        className="border-0 bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
                         placeholder="Enter the streak name"
                         {...field}
                       />
@@ -137,7 +137,7 @@ export const CreateStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
+                        className="border-0 bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
                         placeholder="Add an Emoji to represent this streak"
                         {...field}
                       />
@@ -158,7 +158,7 @@ export const CreateStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
+                        className="border-0 bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
                         placeholder="Enter a URL"
                         {...field}
                       />
@@ -179,7 +179,7 @@ export const CreateStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
+                        className="border-0 bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-background"
                         placeholder="Enter a short description"
                         {...field}
                       />

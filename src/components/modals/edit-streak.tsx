@@ -154,7 +154,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
+                        className="border-0 bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Enter the streak name"
                         {...field}
                       />
@@ -175,7 +175,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
+                        className="border-0 bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Add an Emoji to represent this streak"
                         {...field}
                       />
@@ -196,7 +196,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
+                        className="border-0 bg-muted bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Enter a URL"
                         {...field}
                       />
@@ -217,7 +217,7 @@ export const EditStreakModal = () => {
                     <FormControl>
                       <Input
                         disabled={isLoading}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
+                        className="border-0 bg-muted focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-card"
                         placeholder="Enter a short description"
                         {...field}
                       />
