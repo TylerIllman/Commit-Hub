@@ -25,6 +25,7 @@ import {
 } from "../ui/form";
 import { api } from "~/trpc/react";
 import { UpdateStreakDetailsSchema } from "~/server/api/routers/streaks";
+import { streakWithCompletion } from "~/server/api/routers/user";
 
 export const createStreakFormSchema = z.object({
   name: z.string().min(1, { message: "A streak name is required" }),
@@ -95,7 +96,21 @@ export const EditStreakModal = () => {
 
     console.log("clean Vals: ", cleanVals);
 
-    updateStreakMutation.mutate(cleanVals);
+    updateStreakMutation.mutate(cleanVals, {
+      onSuccess: (res) => {
+        if (data.setUserStreaks) {
+          const tempCompletion: streakWithCompletion = {
+            ...res,
+            completions: [],
+          };
+          data.setUserStreaks((prevStreaks) =>
+            prevStreaks.map((streak) =>
+              streak.id === res.id ? tempCompletion : streak,
+            ),
+          );
+        }
+      },
+    });
     handleClose();
   };
 
