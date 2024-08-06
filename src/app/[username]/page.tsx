@@ -324,7 +324,7 @@ const Page = ({ params }: UserPageProps) => {
               <Share className="ml-1 h-5 w-5 md:ml-2" />
             </div>
             {userQuery.data.user.createdAt && (
-              <span className="md:text-l hidden whitespace-nowrap text-sm text-muted-foreground md:flex lg:text-xl">
+              <span className="hidden whitespace-nowrap text-sm text-muted-foreground md:flex md:text-xl">
                 {/* HACK: Force casting the type of this to a Date (Should be ok due database structure) */}
                 Joined: {formatDate(userQuery.data.user.createdAt)}
               </span>
